@@ -1,0 +1,127 @@
+---
+title: "FIMS architecture exploratory analysis"
+author: "Andrea Havron"
+date: "7/20/2021"
+output: rmarkdown::html_vignette
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+
+# Introduction
+
+The Fisheries Integrated Management Systems aims to offer a system of modular, maintainable, and extensible models for next generation stock assessments. The choice of software platform used to develop FIMS will heavily influence the success of the initiative. While a thorough review of FIMS requirements is currently underway, a concurrent exploration of candidate software platforms will provide insight that will guide final decisions once software requirements have been established.
+
+This project aims to produce a comprehensive review of available statistical computing platforms and summarize their suitability with respect to FIMS. THe cross-comparison study will focus on state-space and explicit spatio-temporal modeling. Models will be developed and implemented across the following software platforms: TMB, C++, Julia, Greta tensorflow, and Stan. Inference pathways for both frequentist and Bayesian inference will be outlined for each platform when applicable. Under consideration will be performance, speed, the usability of the software with respect to both the user and developer, and software features that meet FIMS requirements under consideration.
+
+# Models
+
+The state-space comparison looks at two models: a simple Gompertz state-space model and a logistic growth model.
+
+Gompertz:
+
+$$\begin{align}
+\eta_{t} &= \theta_{1} + \theta_{2}u_{t-1} \\
+u_{t} &\sim N(\eta_{t},\sigma^{2}_{proc}) \\
+y_{t} &\sim N(u_{t}, \sigma^{2}_{obs})
+\end{align}$$,
+
+where $\sigma^{2}_{proc}$ represents the process variance and $\sigma^{2}_{obs}$ represents the observation variance.
+
+Logistic growth:
+
+$$\begin{align}
+\eta_{t} &= u_{t-1} + \theta_{1}u_{t-1}(1-u_{t-1}/\theta_{2}) \\
+u_{t} &\sim LN(log(\eta_{t}),\sigma^{2}_{proc}) \\
+y_{t} &\sim LN(log(u_{t}), \sigma^{2}_{obs})
+\end{align}$$,
+
+where $\theta_{1}$ represents the growth rate and $\theta_{2}$ represents the density-dependent carrying capacity.
+
+# Software Platforms
+## TMB/R
+Fast random effects, reliance on small community of developers
+
+* Base code written in C++, models implemented in R
+* CppAD used for forward/reverse autodifferentiation
+* Derivatives out to third order calculated for Laplace approximation
+* LA used to integrate out random effects
+* Sparse matrix algorithms used to automatically detect sparsity in Hessian and calculate sparse cholesky decompostion
+* Can fit models with large number of parameters and random effects
+* Memory bottleneck when translating from R to C++ (MakeADFun) and returning parameter/derived standard errors (sdreport)
+* ?Modularity
+* Do not need to be expert C++ programmer to write TMB models, although contributors need more advanced skills to write efficient code or contribute to TMB base
+* Well tested AD capabilities
+* Small developers community
+
+Julia
+Fast, Code written and executed in single language, still in infancy (may be bugs in base code, small community of developers)
+
+* New dynamic programming language with Just-In-Time (JIT) Compiler
+* Fast although first time to plot can be slow
+* Avoids the ‘two-language problem’ – all code is written and executed with Julia
+* Modular language – development occurs within packages
+* Multiple packages useful to numerical optimization: Distributions.jl, SPDEPrecisionMatrices.jl, GaussianMarkovRandomFields.jl, Optim.jl, SparsityDetection.jl
+* Autodifferentiation packages: ForwardDiff.jl, ReverseDiff.jl, Zygote.jl
+* Bayesian package: Turing.jl
+* Higher order differentiation to use Laplace approximation to integrate out parameters is still under development
+
+C++/Rcpp
+Examples: r4MAS, CASAL, GADGET, MultifanCL
+
+Stan
+HMC sampler, Laplace approximation using the adjoint method, variational Bayes
+
+* TMBstan
+* Writing code in Stan versus interacting with C++
+
+Greta
+Machine learning approach to Bayesian inference
+
+* Relies on tensorflow to computationally automate Baye’s Rule in its application to generative DAGs
+* greta is a CRAN package that interfaces between R and tensorflow
+* tensorflow is a python package that implements machine learning
+
+## Project Deliverables
+      
+* Table detailing whether or not each platform meets list of FIMS requirements
+* Speed test results
+* Outline inference pathways
+
+## Results
+
+### Platform Comparisons
+
+#### State-Space Gompertz Results
+```{r table, echo = FALSE, warnings = FALSE}
+load('../results/gompertz.RData')
+df <- as.data.frame(cbind(true=c(2,0.8,log(0.1),log(0.5)),sapply(gompertz.results, function(x) x$par.est)))
+row.names(df) <- c('theta_1', expression(theta_2), expression(sigma_p), expression(sigma_o))
+kbl(round(df,3), booktabs = TRUE)
+```
+
+
+#### State-Space Logistic
+
+###Inference Pathways
+
+1. TMB
+Frequentist: -> fn() and gr() passed to nlminb in R -> quasi-Newton optimization routine (Fox, Hall, and Schryer, 1978; Fox, 1997)
+fn(): inner optimization step finds optimum random effects values; Laplace approximation calculates the marginal likelihood after integrating out random effects
+gr(): Gradient functions are determined using forward/reverse automatic differentiation from cppAD and tinyAD
+Bayesian -> fn() and gr() passed to Stan -> HMC algorithm (using tmbStan)
+C++
+Frequentist
+Bayesian -> fn() and gr() passed to Stan -> HMC algorithm (using tmbStan)
+-> fn() and gr() passed to Stan -> HMC algorithm (using tmbStan)
+? -> fn() passed to Stan -> Laplace/HMC ?
+? -> pass to python and tensorflow ?
+Framework for acquiring gradients?
+·       Performance results (eg. stability of source code)
+·       Software platform pros and cons
+·       Ease of use summary
+·       Summary of input/output  procedures
+

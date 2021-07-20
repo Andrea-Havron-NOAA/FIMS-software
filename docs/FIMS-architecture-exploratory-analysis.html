@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Andrea Havron" />
+
+
+<title>FIMS architecture exploratory analysis</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script src="data:application/javascript;base64,JChkb2N1bWVudCkucmVhZHkoZnVuY3Rpb24oKXsKICAgIGlmICh0eXBlb2YgJCgnW2RhdGEtdG9nZ2xlPSJ0b29sdGlwIl0nKS50b29sdGlwID09PSAnZnVuY3Rpb24nKSB7CiAgICAgICAgJCgnW2RhdGEtdG9nZ2xlPSJ0b29sdGlwIl0nKS50b29sdGlwKCk7CiAgICB9CiAgICBpZiAoJCgnW2RhdGEtdG9nZ2xlPSJwb3BvdmVyIl0nKS5wb3BvdmVyID09PSAnZnVuY3Rpb24nKSB7CiAgICAgICAgJCgnW2RhdGEtdG9nZ2xlPSJwb3BvdmVyIl0nKS5wb3BvdmVyKCk7CiAgICB9Cn0pOwo="></script>
+<link href="data:text/css,%0A%2Elightable%2Dminimal%20%7B%0Aborder%2Dcollapse%3A%20separate%3B%0Aborder%2Dspacing%3A%2016px%201px%3B%0Awidth%3A%20100%25%3B%0Amargin%2Dbottom%3A%2010px%3B%0A%7D%0A%2Elightable%2Dminimal%20td%20%7B%0Amargin%2Dleft%3A%205px%3B%0Amargin%2Dright%3A%205px%3B%0A%7D%0A%2Elightable%2Dminimal%20th%20%7B%0Amargin%2Dleft%3A%205px%3B%0Amargin%2Dright%3A%205px%3B%0A%7D%0A%2Elightable%2Dminimal%20thead%20tr%3Alast%2Dchild%20th%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%2300000050%3B%0Aempty%2Dcells%3A%20hide%3B%0A%7D%0A%2Elightable%2Dminimal%20tbody%20tr%3Afirst%2Dchild%20td%20%7B%0Apadding%2Dtop%3A%200%2E5em%3B%0A%7D%0A%2Elightable%2Dminimal%2Elightable%2Dhover%20tbody%20tr%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0A%7D%0A%2Elightable%2Dminimal%2Elightable%2Dstriped%20tbody%20tr%3Anth%2Dchild%28even%29%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0A%7D%0A%2Elightable%2Dclassic%20%7B%0Aborder%2Dtop%3A%200%2E16em%20solid%20%23111111%3B%0Aborder%2Dbottom%3A%200%2E16em%20solid%20%23111111%3B%0Awidth%3A%20100%25%3B%0Amargin%2Dbottom%3A%2010px%3B%0Amargin%3A%2010px%205px%3B%0A%7D%0A%2Elightable%2Dclassic%20tfoot%20tr%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dclassic%20tfoot%20tr%3Afirst%2Dchild%20td%20%7B%0Aborder%2Dtop%3A%200%2E14em%20solid%20%23111111%3B%0A%7D%0A%2Elightable%2Dclassic%20caption%20%7B%0Acolor%3A%20%23222222%3B%0A%7D%0A%2Elightable%2Dclassic%20td%20%7B%0Apadding%2Dleft%3A%205px%3B%0Apadding%2Dright%3A%205px%3B%0Acolor%3A%20%23222222%3B%0A%7D%0A%2Elightable%2Dclassic%20th%20%7B%0Apadding%2Dleft%3A%205px%3B%0Apadding%2Dright%3A%205px%3B%0Afont%2Dweight%3A%20normal%3B%0Acolor%3A%20%23222222%3B%0A%7D%0A%2Elightable%2Dclassic%20thead%20tr%3Alast%2Dchild%20th%20%7B%0Aborder%2Dbottom%3A%200%2E10em%20solid%20%23111111%3B%0A%7D%0A%2Elightable%2Dclassic%2Elightable%2Dhover%20tbody%20tr%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23F9EEC1%3B%0A%7D%0A%2Elightable%2Dclassic%2Elightable%2Dstriped%20tbody%20tr%3Anth%2Dchild%28even%29%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20%7B%0Aborder%2Dtop%3A%203px%20double%20%23111111%3B%0Aborder%2Dbottom%3A%203px%20double%20%23111111%3B%0Awidth%3A%20100%25%3B%0Amargin%2Dbottom%3A%2010px%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20tfoot%20tr%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20tfoot%20tr%3Afirst%2Dchild%20td%20%7B%0Aborder%2Dtop%3A%203px%20double%20%23111111%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20caption%20%7B%0Acolor%3A%20%23222222%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20td%20%7B%0Apadding%2Dleft%3A%205px%3B%0Apadding%2Dright%3A%205px%3B%0Acolor%3A%20%23222222%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20th%20%7B%0Apadding%2Dleft%3A%205px%3B%0Apadding%2Dright%3A%205px%3B%0Afont%2Dweight%3A%20normal%3B%0Acolor%3A%20%23222222%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20tbody%20tr%3Alast%2Dchild%20td%20%7B%0Aborder%2Dbottom%3A%203px%20double%20%23111111%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20thead%20tr%3Alast%2Dchild%20th%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23111111%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%2Elightable%2Dhover%20tbody%20tr%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23F9EEC1%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%2Elightable%2Dstriped%20tbody%20tr%3Anth%2Dchild%28even%29%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0A%7D%0A%2Elightable%2Dmaterial%20%7B%0Amin%2Dwidth%3A%20100%25%3B%0Awhite%2Dspace%3A%20nowrap%3B%0Atable%2Dlayout%3A%20fixed%3B%0Afont%2Dfamily%3A%20Roboto%2C%20sans%2Dserif%3B%0Aborder%3A%201px%20solid%20%23EEE%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0Amargin%2Dbottom%3A%2010px%3B%0A%7D%0A%2Elightable%2Dmaterial%20tfoot%20tr%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dmaterial%20tfoot%20tr%3Afirst%2Dchild%20td%20%7B%0Aborder%2Dtop%3A%201px%20solid%20%23EEE%3B%0A%7D%0A%2Elightable%2Dmaterial%20th%20%7B%0Aheight%3A%2056px%3B%0Apadding%2Dleft%3A%2016px%3B%0Apadding%2Dright%3A%2016px%3B%0A%7D%0A%2Elightable%2Dmaterial%20td%20%7B%0Aheight%3A%2052px%3B%0Apadding%2Dleft%3A%2016px%3B%0Apadding%2Dright%3A%2016px%3B%0Aborder%2Dtop%3A%201px%20solid%20%23eeeeee%3B%0A%7D%0A%2Elightable%2Dmaterial%2Elightable%2Dhover%20tbody%20tr%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0A%7D%0A%2Elightable%2Dmaterial%2Elightable%2Dstriped%20tbody%20tr%3Anth%2Dchild%28even%29%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0A%7D%0A%2Elightable%2Dmaterial%2Elightable%2Dstriped%20tbody%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dmaterial%2Elightable%2Dstriped%20thead%20tr%3Alast%2Dchild%20th%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ddd%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%20%7B%0Amin%2Dwidth%3A%20100%25%3B%0Awhite%2Dspace%3A%20nowrap%3B%0Atable%2Dlayout%3A%20fixed%3B%0Afont%2Dfamily%3A%20Roboto%2C%20sans%2Dserif%3B%0Aborder%3A%201px%20solid%20%23FFFFFF12%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0Amargin%2Dbottom%3A%2010px%3B%0Abackground%2Dcolor%3A%20%23363640%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%20tfoot%20tr%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%20tfoot%20tr%3Afirst%2Dchild%20td%20%7B%0Aborder%2Dtop%3A%201px%20solid%20%23FFFFFF12%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%20th%20%7B%0Aheight%3A%2056px%3B%0Apadding%2Dleft%3A%2016px%3B%0Apadding%2Dright%3A%2016px%3B%0Acolor%3A%20%23FFFFFF60%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%20td%20%7B%0Aheight%3A%2052px%3B%0Apadding%2Dleft%3A%2016px%3B%0Apadding%2Dright%3A%2016px%3B%0Acolor%3A%20%23FFFFFF%3B%0Aborder%2Dtop%3A%201px%20solid%20%23FFFFFF12%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%2Elightable%2Dhover%20tbody%20tr%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF12%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%2Elightable%2Dstriped%20tbody%20tr%3Anth%2Dchild%28even%29%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF12%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%2Elightable%2Dstriped%20tbody%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%2Elightable%2Dstriped%20thead%20tr%3Alast%2Dchild%20th%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23FFFFFF12%3B%0A%7D%0A%2Elightable%2Dpaper%20%7B%0Awidth%3A%20100%25%3B%0Amargin%2Dbottom%3A%2010px%3B%0Acolor%3A%20%23444%3B%0A%7D%0A%2Elightable%2Dpaper%20tfoot%20tr%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dpaper%20tfoot%20tr%3Afirst%2Dchild%20td%20%7B%0Aborder%2Dtop%3A%201px%20solid%20%2300000020%3B%0A%7D%0A%2Elightable%2Dpaper%20thead%20tr%3Alast%2Dchild%20th%20%7B%0Acolor%3A%20%23666%3B%0Avertical%2Dalign%3A%20bottom%3B%0Aborder%2Dbottom%3A%201px%20solid%20%2300000020%3B%0Aline%2Dheight%3A%201%2E15em%3B%0Apadding%3A%2010px%205px%3B%0A%7D%0A%2Elightable%2Dpaper%20td%20%7B%0Avertical%2Dalign%3A%20middle%3B%0Aborder%2Dbottom%3A%201px%20solid%20%2300000010%3B%0Aline%2Dheight%3A%201%2E15em%3B%0Apadding%3A%207px%205px%3B%0A%7D%0A%2Elightable%2Dpaper%2Elightable%2Dhover%20tbody%20tr%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23F9EEC1%3B%0A%7D%0A%2Elightable%2Dpaper%2Elightable%2Dstriped%20tbody%20tr%3Anth%2Dchild%28even%29%20%7B%0Abackground%2Dcolor%3A%20%2300000008%3B%0A%7D%0A%2Elightable%2Dpaper%2Elightable%2Dstriped%20tbody%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">FIMS architecture exploratory analysis</h1>
+<h4 class="author">Andrea Havron</h4>
+<h4 class="date">7/20/2021</h4>
+
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>The Fisheries Integrated Management Systems aims to offer a system of modular, maintainable, and extensible models for next generation stock assessments. The choice of software platform used to develop FIMS will heavily influence the success of the initiative. While a thorough review of FIMS requirements is currently underway, a concurrent exploration of candidate software platforms will provide insight that will guide final decisions once software requirements have been established.</p>
+<p>This project aims to produce a comprehensive review of available statistical computing platforms and summarize their suitability with respect to FIMS. THe cross-comparison study will focus on state-space and explicit spatio-temporal modeling. Models will be developed and implemented across the following software platforms: TMB, C++, Julia, Greta tensorflow, and Stan. Inference pathways for both frequentist and Bayesian inference will be outlined for each platform when applicable. Under consideration will be performance, speed, the usability of the software with respect to both the user and developer, and software features that meet FIMS requirements under consideration.</p>
+</div>
+<div id="models" class="section level1">
+<h1>Models</h1>
+<p>The state-space comparison looks at two models: a simple Gompertz state-space model and a logistic growth model.</p>
+<p>Gompertz:</p>
+<p><span class="math display">\[\begin{align}
+\eta_{t} &amp;= \theta_{1} + \theta_{2}u_{t-1} \\
+u_{t} &amp;\sim N(\eta_{t},\sigma^{2}_{proc}) \\
+y_{t} &amp;\sim N(u_{t}, \sigma^{2}_{obs})
+\end{align}\]</span>,</p>
+<p>where <span class="math inline">\(\sigma^{2}_{proc}\)</span> represents the process variance and <span class="math inline">\(\sigma^{2}_{obs}\)</span> represents the observation variance.</p>
+<p>Logistic growth:</p>
+<p><span class="math display">\[\begin{align}
+\eta_{t} &amp;= u_{t-1} + \theta_{1}u_{t-1}(1-u_{t-1}/\theta_{2}) \\
+u_{t} &amp;\sim LN(log(\eta_{t}),\sigma^{2}_{proc}) \\
+y_{t} &amp;\sim LN(log(u_{t}), \sigma^{2}_{obs})
+\end{align}\]</span>,</p>
+<p>where <span class="math inline">\(\theta_{1}\)</span> represents the growth rate and <span class="math inline">\(\theta_{2}\)</span> represents the density-dependent carrying capacity.</p>
+</div>
+<div id="software-platforms" class="section level1">
+<h1>Software Platforms</h1>
+<div id="tmbr" class="section level2">
+<h2>TMB/R</h2>
+<p>Fast random effects, reliance on small community of developers</p>
+<ul>
+<li>Base code written in C++, models implemented in R</li>
+<li>CppAD used for forward/reverse autodifferentiation</li>
+<li>Derivatives out to third order calculated for Laplace approximation</li>
+<li>LA used to integrate out random effects</li>
+<li>Sparse matrix algorithms used to automatically detect sparsity in Hessian and calculate sparse cholesky decompostion</li>
+<li>Can fit models with large number of parameters and random effects</li>
+<li>Memory bottleneck when translating from R to C++ (MakeADFun) and returning parameter/derived standard errors (sdreport)</li>
+<li>?Modularity</li>
+<li>Do not need to be expert C++ programmer to write TMB models, although contributors need more advanced skills to write efficient code or contribute to TMB base</li>
+<li>Well tested AD capabilities</li>
+<li>Small developers community</li>
+</ul>
+<p>Julia Fast, Code written and executed in single language, still in infancy (may be bugs in base code, small community of developers)</p>
+<ul>
+<li>New dynamic programming language with Just-In-Time (JIT) Compiler</li>
+<li>Fast although first time to plot can be slow</li>
+<li>Avoids the ‘two-language problem’ – all code is written and executed with Julia</li>
+<li>Modular language – development occurs within packages</li>
+<li>Multiple packages useful to numerical optimization: Distributions.jl, SPDEPrecisionMatrices.jl, GaussianMarkovRandomFields.jl, Optim.jl, SparsityDetection.jl</li>
+<li>Autodifferentiation packages: ForwardDiff.jl, ReverseDiff.jl, Zygote.jl</li>
+<li>Bayesian package: Turing.jl</li>
+<li>Higher order differentiation to use Laplace approximation to integrate out parameters is still under development</li>
+</ul>
+<p>C++/Rcpp Examples: r4MAS, CASAL, GADGET, MultifanCL</p>
+<p>Stan HMC sampler, Laplace approximation using the adjoint method, variational Bayes</p>
+<ul>
+<li>TMBstan</li>
+<li>Writing code in Stan versus interacting with C++</li>
+</ul>
+<p>Greta Machine learning approach to Bayesian inference</p>
+<ul>
+<li>Relies on tensorflow to computationally automate Baye’s Rule in its application to generative DAGs</li>
+<li>greta is a CRAN package that interfaces between R and tensorflow</li>
+<li>tensorflow is a python package that implements machine learning</li>
+</ul>
+</div>
+<div id="project-deliverables" class="section level2">
+<h2>Project Deliverables</h2>
+<ul>
+<li>Table detailing whether or not each platform meets list of FIMS requirements</li>
+<li>Speed test results</li>
+<li>Outline inference pathways</li>
+</ul>
+</div>
+<div id="results" class="section level2">
+<h2>Results</h2>
+<div id="platform-comparisons" class="section level3">
+<h3>Platform Comparisons</h3>
+<div id="state-space-gompertz-results" class="section level4">
+<h4>State-Space Gompertz Results</h4>
+<table>
+<caption>
+Parameter estimates for state-space gompertz model
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+true
+</th>
+<th style="text-align:right;">
+tmb
+</th>
+<th style="text-align:right;">
+tmbstan
+</th>
+<th style="text-align:right;">
+stanP0
+</th>
+<th style="text-align:right;">
+stanP1
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\theta_{1}\)</span>
+</td>
+<td style="text-align:right;">
+2.000
+</td>
+<td style="text-align:right;">
+2.151
+</td>
+<td style="text-align:right;">
+2.267
+</td>
+<td style="text-align:right;">
+2.214
+</td>
+<td style="text-align:right;">
+2.295
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\theta_{2}\)</span>
+</td>
+<td style="text-align:right;">
+0.800
+</td>
+<td style="text-align:right;">
+0.786
+</td>
+<td style="text-align:right;">
+0.775
+</td>
+<td style="text-align:right;">
+0.780
+</td>
+<td style="text-align:right;">
+0.772
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ln(<span class="math inline">\(\sigma_{proc}\)</span>)
+</td>
+<td style="text-align:right;">
+-2.303
+</td>
+<td style="text-align:right;">
+-1.645
+</td>
+<td style="text-align:right;">
+-1.646
+</td>
+<td style="text-align:right;">
+-1.765
+</td>
+<td style="text-align:right;">
+-2.655
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ln(<span class="math inline">\(\sigma_{obs}\)</span>)
+</td>
+<td style="text-align:right;">
+-0.693
+</td>
+<td style="text-align:right;">
+-0.349
+</td>
+<td style="text-align:right;">
+-0.346
+</td>
+<td style="text-align:right;">
+-0.331
+</td>
+<td style="text-align:right;">
+-0.305
+</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>
+Standard error estimates for state-space gompertz model
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+tmb
+</th>
+<th style="text-align:right;">
+tmbstan
+</th>
+<th style="text-align:right;">
+stanP0
+</th>
+<th style="text-align:right;">
+stanP1
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\theta_{1}\)</span>
+</td>
+<td style="text-align:right;">
+0.343
+</td>
+<td style="text-align:right;">
+0.019
+</td>
+<td style="text-align:right;">
+0.053
+</td>
+<td style="text-align:right;">
+0.042
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\theta_{2}\)</span>
+</td>
+<td style="text-align:right;">
+0.035
+</td>
+<td style="text-align:right;">
+0.002
+</td>
+<td style="text-align:right;">
+0.006
+</td>
+<td style="text-align:right;">
+0.004
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ln(<span class="math inline">\(\sigma_{proc}\)</span>)
+</td>
+<td style="text-align:right;">
+0.408
+</td>
+<td style="text-align:right;">
+0.062
+</td>
+<td style="text-align:right;">
+0.118
+</td>
+<td style="text-align:right;">
+0.895
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ln(<span class="math inline">\(\sigma_{obs}\)</span>)
+</td>
+<td style="text-align:right;">
+0.088
+</td>
+<td style="text-align:right;">
+0.005
+</td>
+<td style="text-align:right;">
+0.010
+</td>
+<td style="text-align:right;">
+0.025
+</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>
+Run times for state-space gompertz model
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+time..min.
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+tmb
+</td>
+<td style="text-align:right;">
+0.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+tmbstan
+</td>
+<td style="text-align:right;">
+0.458
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+stanP0
+</td>
+<td style="text-align:right;">
+2.227
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+stanP1
+</td>
+<td style="text-align:right;">
+4.699
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="state-space-logistic-results" class="section level4">
+<h4>State-Space Logistic Results</h4>
+<table>
+<caption>
+Parameter estimates for state-space logistic model
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+true
+</th>
+<th style="text-align:right;">
+tmb
+</th>
+<th style="text-align:right;">
+tmbstan
+</th>
+<th style="text-align:right;">
+stanP0
+</th>
+<th style="text-align:right;">
+stanP1
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\theta_{1}\)</span>
+</td>
+<td style="text-align:right;">
+-1.609
+</td>
+<td style="text-align:right;">
+-1.549
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-721555.804
+</td>
+<td style="text-align:right;">
+-20.178
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\theta_{2}\)</span>
+</td>
+<td style="text-align:right;">
+4.605
+</td>
+<td style="text-align:right;">
+4.653
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+100.829
+</td>
+<td style="text-align:right;">
+-6.903
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ln(<span class="math inline">\(\sigma_{proc}\)</span>)
+</td>
+<td style="text-align:right;">
+-4.605
+</td>
+<td style="text-align:right;">
+-2.504
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-2.157
+</td>
+<td style="text-align:right;">
+-2.100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ln(<span class="math inline">\(\sigma_{obs}\)</span>)
+</td>
+<td style="text-align:right;">
+-6.908
+</td>
+<td style="text-align:right;">
+-3.202
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-5.493
+</td>
+<td style="text-align:right;">
+-10.803
+</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>
+Standard error estimates for state-space logistic model
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+tmb
+</th>
+<th style="text-align:right;">
+tmbstan
+</th>
+<th style="text-align:right;">
+stanP0
+</th>
+<th style="text-align:right;">
+stanP1
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\theta_{1}\)</span>
+</td>
+<td style="text-align:right;">
+0.126
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+719205.863
+</td>
+<td style="text-align:right;">
+0.615
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\theta_{2}\)</span>
+</td>
+<td style="text-align:right;">
+0.045
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+27.077
+</td>
+<td style="text-align:right;">
+0.612
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ln(<span class="math inline">\(\sigma_{proc}\)</span>)
+</td>
+<td style="text-align:right;">
+0.148
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0.093
+</td>
+<td style="text-align:right;">
+0.011
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ln(<span class="math inline">\(\sigma_{obs}\)</span>)
+</td>
+<td style="text-align:right;">
+0.361
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0.851
+</td>
+<td style="text-align:right;">
+0.330
+</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>
+Run times for state-space logistic model
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+time..min.
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+tmb
+</td>
+<td style="text-align:right;">
+0.002
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+tmbstan
+</td>
+<td style="text-align:right;">
+0.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+stanP0
+</td>
+<td style="text-align:right;">
+1.884
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+stanP1
+</td>
+<td style="text-align:right;">
+0.887
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="inference-pathways" class="section level3">
+<h3>Inference Pathways</h3>
+<p>TMB</p>
+<ol style="list-style-type: decimal">
+<li>Frequentist: -&gt; fn() and gr() passed to nlminb in R -&gt; quasi-Newton optimization routine (Fox, Hall, and Schryer, 1978; Fox, 1997)
+<ul>
+<li>fn(): inner optimization step finds optimum random effects values; Laplace approximation calculates the marginal likelihood after integrating out random effects</li>
+<li>gr(): Gradient functions are determined using forward/reverse automatic differentiation from cppAD and tinyAD</li>
+</ul></li>
+<li>Bayesian -&gt; fn() and gr() passed to Stan -&gt; HMC algorithm (using tmbStan)</li>
+</ol>
+<p>C++</p>
+<ol style="list-style-type: decimal">
+<li>Frequentist</li>
+<li>Bayesian -&gt; fn() and gr() passed to Stan -&gt; HMC algorithm (using tmbStan)
+<ul>
+<li>-&gt; fn() and gr() passed to Stan -&gt; HMC algorithm (using tmbStan)</li>
+<li>? -&gt; fn() passed to Stan -&gt; Laplace/HMC ?</li>
+<li>? -&gt; pass to python and tensorflow ?</li>
+<li>Framework for acquiring gradients?</li>
+</ul></li>
+</ol>
+<p>Performance results (eg. stability of source code) * Software platform pros and cons * Ease of use summary * Summary of input/output procedures</p>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
