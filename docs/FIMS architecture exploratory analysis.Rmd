@@ -2,14 +2,13 @@
 title: "FIMS architecture exploratory analysis"
 author: "Andrea Havron"
 date: "7/20/2021"
-output: rmarkdown::html_vignette
-
+output: html_vignette
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(kableExtra)
- options(knitr.table.format = "latex") 
+options(knitr.table.format = "latex") 
 ```
 
 
