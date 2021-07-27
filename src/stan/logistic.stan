@@ -12,7 +12,7 @@ data{
 }
 
 parameters{
-  vector[2] theta;
+  vector<lower=log(0.01),upper=log(1000)>[2] theta;
   real ln_sig;
   real ln_tau;
   vector<lower=0.001>[N] u;
