@@ -11,7 +11,7 @@ runTMB <- function(dat,mod){
   b <- Sys.time()
   if(mod == 'gompertz'){
     results$tmb <- list(par.est = c(summary(sdr)[1:2,1],summary(sdr,'report')[,1]),
-                        se.est = summary(sdr,'report')[,2],
+                        se.est = c(summary(sdr)[1:2,1],summary(sdr,'report')[,2]),
                         time = difftime(b,a, units = 'mins'))
   } else {
     results$tmb <- list(par.est = summary(sdr,'report')[,1],

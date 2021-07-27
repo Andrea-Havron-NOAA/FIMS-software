@@ -54,6 +54,7 @@ b <- Sys.time()
 gompertz.results$stanP0 <- list(par.est = as.vector(as.matrix(fit.p0$summary(c('theta', 'ln_sig', 'ln_tau'), 'mean')[,2])),
                                 se.est = as.vector(as.matrix(fit.p0$summary(c('theta', 'ln_sig', 'ln_tau'), 'sd')[,2])),
                                 time = difftime(b,a, units = 'mins'))
+gompertz.results$stanP0$par.est[3:4] <- exp(gompertz.results$stanP0$par.est[3:4])
 #use proper vague priors
 a <- Sys.time()
 hyperParameters <- list(
@@ -73,10 +74,10 @@ b <- Sys.time()
 gompertz.results$stanP1 <-  list(par.est = as.vector(as.matrix(fit.p1$summary(c('theta', 'ln_sig', 'ln_tau'), 'mean')[,2])),
                                  se.est = as.vector(as.matrix(fit.p1$summary(c('theta', 'ln_sig', 'ln_tau'), 'sd')[,2])),
                                  time = difftime(b,a, units = 'mins'))
-
+gompertz.results$stanP1$par.est[3:4] <- exp(gompertz.results$stanP1$par.est[3:4])
 save(gompertz.results, file = 'results/gompertz.RData')
 #Compare stan, tmbstan, tmb
-cbind(true=c(2,0.8,log(0.1),log(0.5)),sapply(gompertz.results, function(x) x$par.est))
+cbind(true=c(2,0.8,0.1,0.5),sapply(gompertz.results, function(x) x$par.est))
 sapply(gompertz.results, function(x) x$se.est)
 sapply(gompertz.results, function(x) x$time)
 
@@ -91,7 +92,7 @@ simdata <- gendat(seed=123,
                   var = list(proc=0.01,obs=0.001),
                   mod.name = Mod)
 
-logistic.results <- runTMB(simdata,Mod) #not working
+logistic.results <- runTMB(simdata,Mod) 
 
 
 #stan
@@ -112,8 +113,8 @@ fit.p0 <- mod$sample(
   iter_warmup = 4000, iter_sampling = 5000
 )
 b <- Sys.time()
-logistic.results$stanP0 <-  list(par.est = as.vector(as.matrix(fit.p0$summary(c('theta', 'ln_sig', 'ln_tau'), 'mean')[,2])),
-                                 se.est = as.vector(as.matrix(fit.p0$summary(c('theta', 'ln_sig', 'ln_tau'), 'sd')[,2])),
+logistic.results$stanP0 <-  list(par.est = as.vector(as.matrix(fit.p0$summary(c('r', 'K', 'sigma', 'tau'), 'mean')[,2])),
+                                 se.est = as.vector(as.matrix(fit.p0$summary(c('r', 'K', 'sigma', 'tau'), 'sd')[,2])),
                                  time = difftime(b,a, units = 'mins'))
 
 #use proper vague priors
@@ -132,13 +133,12 @@ fit.p1 <- mod$sample(
   iter_warmup = 4000, iter_sampling = 5000
 )
 b <- Sys.time()
-logistic.results$stanP1 <- list(par.est = as.vector(as.matrix(fit.p1$summary(c('theta', 'ln_sig', 'ln_tau'), 'mean')[,2])),
-                                se.est = as.vector(as.matrix(fit.p1$summary(c('theta', 'ln_sig', 'ln_tau'), 'sd')[,2])),
+logistic.results$stanP1 <- list(par.est = as.vector(as.matrix(fit.p1$summary(c('r','K', 'sigma', 'tau'), 'mean')[,2])),
+                                se.est = as.vector(as.matrix(fit.p1$summary(c('r', 'K', 'sigma', 'tau'), 'sd')[,2])),
                                 time = difftime(b,a, units = 'mins'))
 
 save(logistic.results, file = 'results/logistic.RData')
 #Compare rstan, tmbstan, tmb
-cbind(true=c(log(0.2),log(100),log(0.01),log(0.001)),sapply(logistic.results, function(x) x$par.est))
+cbind(true=c(0.2,100,0.01,0.001),round(sapply(logistic.results, function(x) x$par.est),3))
 sapply(logistic.results, function(x) x$se.est)
 sapply(logistic.results, function(x) x$time)
-
