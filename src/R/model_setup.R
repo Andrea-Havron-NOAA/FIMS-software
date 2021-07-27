@@ -3,7 +3,7 @@ runTMB <- function(dat,mod){
   results <- list()
   setupTMB()
   Dat <- mkTMBdat(dat, mod)
-  Par <- do.call(paste0(mod,'.init'), args = list(N=length(dat)))
+  Par <- do.call(paste0(mod,'.init'), args = list())
   obj <- MakeADFun(Dat, Par, random = 'u')
   a<- Sys.time()
   tmb.mod <- nlminb( obj$par, obj$fn, obj$gr )
