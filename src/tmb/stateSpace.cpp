@@ -7,6 +7,13 @@ Type dlnorm(Type x, Type meanlog, Type sdlog, int give_log=0){
   if(give_log) return logres; else return exp(logres);
 }
 
+//dinvgamma
+template<class Type>
+Type dinvgamma(Type x, Type shape, Type scale, int give_log=0){
+  Type logres = -lgamma(shape) - shape*log(scale) - (shape+1)*x - 1/(scale*x);
+  if(give_log) return logres; else return exp(logres);
+}
+
 template<class Type>
 Type objective_function<Type>::operator()()
 {
