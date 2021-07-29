@@ -43,10 +43,10 @@ model {
     }
     
     // prior distribution of sigma2:
-    target += gamma_lpdf(sigma | hyp_sig[1],hyp_sig[2]);
+    target += inv_gamma_lpdf(sigma | hyp_sig[1],hyp_sig[2]);
   
     // prior distribution of tau2: 
-    target += gamma_lpdf(tau | hyp_tau[1],hyp_tau[2]);
+    target += inv_gamma_lpdf(tau | hyp_tau[1],hyp_tau[2]);
   }
   //state likelihoods
   //target += normal_lpdf(u[1]| umed[1],sigma);

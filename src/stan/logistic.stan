@@ -50,10 +50,10 @@ model {
    
     
     // prior distribution of sigma2: inv. gamma with 10% and 90% qu. at 0.04 and 0.08
-    target += gamma_lpdf(sigma | hyp_sig[1],hyp_sig[2]);
+    target += inv_gamma_lpdf(sigma | hyp_sig[1],hyp_sig[2]);
   
     // prior distribution of tau2: inv. gamma with 10% and 90% qu. at 0.05 and 0.15
-    target += gamma_lpdf(tau | hyp_tau[1],hyp_tau[2]);
+    target += inv_gamma_lpdf(tau | hyp_tau[1],hyp_tau[2]);
   }
   //state likelihoods
   //target += lognormal_lpdf(u[1] | umed[1],sigma);
