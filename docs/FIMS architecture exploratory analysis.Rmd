@@ -99,12 +99,12 @@ Machine learning approach to Bayesian inference
 #### State-Space Gompertz Results
 ```{r tableSSgomp, echo = FALSE, warnings = FALSE}
 load('../results/gompertz.RData')
-df <- as.data.frame(cbind(true=c(2,0.8,log(0.1),log(0.5)),sapply(gompertz.results, function(x) x$par.est)))
-row.names(df) <- c('$\\theta_{1}$', '$\\theta_{2}$', 'ln($\\sigma_{proc}$)','ln($\\sigma_{obs}$)')
+df <- as.data.frame(cbind(true=c(2,0.8,0.1,0.5),sapply(gompertz.results, function(x) x$par.est)))
+row.names(df) <- c('$\\theta_{1}$', '$\\theta_{2}$', '$\\sigma_{proc}$','$\\sigma_{obs}$')
 kbl(df,booktabs = TRUE, caption = 'Parameter estimates for state-space gompertz model', digits = 3, label = 'SSgompMu')
 
 df <- as.data.frame(sapply(gompertz.results, function(x) x$se.est))
-row.names(df) <- c('$\\theta_{1}$', '$\\theta_{2}$', 'ln($\\sigma_{proc}$)','ln($\\sigma_{obs}$)')
+row.names(df) <- c('$\\theta_{1}$', '$\\theta_{2}$', '$\\sigma_{proc}$','$\\sigma_{obs}$')
 kbl(df,booktabs = TRUE, caption = 'Standard error estimates for state-space gompertz model', digits = 3, label = 'SSgompSE')
 
 df <- data.frame('time (min)' = sapply(gompertz.results, function(x) x$time))
@@ -115,12 +115,12 @@ kbl(df,booktabs = TRUE, caption = 'Run times for state-space gompertz model', di
 #### State-Space Logistic Results
 ```{r tableSSlogisticMean, echo = FALSE, warnings = FALSE}
 load('../results/logistic.RData')
-df <- as.data.frame(cbind(true=c(log(0.2),log(100),log(0.01),log(0.001)),sapply(logistic.results, function(x) x$par.est)))
-row.names(df) <- c('$\\theta_{1}$', '$\\theta_{2}$', 'ln($\\sigma_{proc}$)','ln($\\sigma_{obs}$)')
-kbl(df,booktabs = TRUE, caption = 'Parameter estimates for state-space logistic model', digits = 3, label = 'SSlogMu')
+df <- as.data.frame(cbind(true=c(0.2,100L,0.01,0.001),sapply(logistic.results, function(x) x$par.est)))
+row.names(df) <- c('r', 'K', '$\\sigma_{proc}$','$\\sigma_{obs}$')
+kbl(df,booktabs = TRUE, caption = 'Parameter estimates for state-space logistic model', label = 'SSlogMu', format.args = list(scientific = FALSE))
 
 df <- as.data.frame(sapply(logistic.results, function(x) x$se.est))
-row.names(df) <- c('$\\theta_{1}$', '$\\theta_{2}$', 'ln($\\sigma_{proc}$)','ln($\\sigma_{obs}$)')
+row.names(df) <- c('r', 'K', '$\\sigma_{proc}$','$\\sigma_{obs}$')
 kbl(df,booktabs = TRUE, caption = 'Standard error estimates for state-space logistic model', digits = 3, label = 'SSlogSE')
 
 df <- data.frame('time (min)' = sapply(logistic.results, function(x) x$time))
