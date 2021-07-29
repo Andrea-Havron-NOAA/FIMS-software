@@ -10,11 +10,7 @@ source('src/R/model_setup.R')
 gompertz.results <- list()
 logistic.results <- list()
 
-# Init functions
-gompertz.init <- function(){
-  list(theta = c(0,0), ln_sig = 0, ln_tau = 0,
-       u = rep(0,n))
-}
+
 logistic.init <- function(){
   list(theta = c(log(0.5), log(80)), ln_sig=-1,ln_tau=-1,
        u = rep(1,n))
@@ -30,7 +26,17 @@ simdata <- gendat(seed=123,
                   u1 = 4,
                   var = list(proc=0.1,obs=0.5),
                   mod.name = Mod)
-gompertz.results <- runTMB(simdata,Mod)
+write.csv(data.frame(y=simdata), file = 'data/gompertz.csv')
+results <- runTMB(simdata,Mod)
+gompertz.results <- list(tmb = results$tmb, tmbstan = results$tmbstan)
+
+# Init functions
+gompertz.init <- function(){
+  list(theta = results$inits[1:2],
+       ln_sig = results$inits[3],
+       ln_tau = results$inits[4],
+       u = results$inits[5:length(results$inits)])
+}
 
 #stan
 #use improper priors to compare with tmbstan
@@ -47,7 +53,7 @@ mod <- cmdstan_model(file) #compile stan model into C++
 fit.p0 <- mod$sample(
   data = Dat,
   init = gompertz.init,
-  iter_warmup = 4000, iter_sampling = 5000
+  iter_warmup = 2000, iter_sampling = 2000
 )
 
 b <- Sys.time()
@@ -58,8 +64,8 @@ gompertz.results$stanP0$par.est[3:4] <- exp(gompertz.results$stanP0$par.est[3:4]
 #use proper vague priors
 a <- Sys.time()
 hyperParameters <- list(
-  hyperSig = c(0.001,0.001), #dgamma
-  hyperTau = c(0.001,0.001), #dgamma
+  hyperSig = c(0.001,0.001), #dinvgamma
+  hyperTau = c(0.001,0.001), #dinvgamma
   hyperTheta1 = 0, #normal mean
   hyperTheta2 = 100 #normal sd
 )
@@ -68,7 +74,7 @@ Dat$prior_type <- 1
 fit.p1 <- mod$sample(
   data = Dat,
   init = gompertz.init,
-  iter_warmup = 4000, iter_sampling = 5000
+  iter_warmup = 2000, iter_sampling = 2000
 )
 b <- Sys.time()
 gompertz.results$stanP1 <-  list(par.est = as.vector(as.matrix(fit.p1$summary(c('theta', 'ln_sig', 'ln_tau'), 'mean')[,2])),
@@ -91,16 +97,17 @@ simdata <- gendat(seed=123,
                   u1 = 4,
                   var = list(proc=0.01,obs=0.001),
                   mod.name = Mod)
-
-logistic.results <- runTMB(simdata,Mod) 
+write.csv(data.frame(y=simdata), file = 'data/logistic.csv')
+results <- runTMB(simdata,Mod) 
+logistic.results <-  list(tmb = results$tmb, tmbstan = results$tmbstan)
 
 
 #stan
 #use improper priors to compare with tmbstan
 a <- Sys.time()
 hyperParameters <- list(
-  hyperSig = c(0,0), #dgamma
-  hyperTau = c(0,0), #dgamma
+  hyperSig = c(0,0), #dinvgamma
+  hyperTau = c(0,0), #dinvgamma
   hyperTheta1 = c(0,0), #normal
   hyperTheta2 = c(0,0) #normal 
 )
@@ -110,7 +117,7 @@ mod <- cmdstan_model(file) #compile stan model into C++
 fit.p0 <- mod$sample(
   data = Dat,
   init = logistic.init,
-  iter_warmup = 4000, iter_sampling = 5000
+  iter_warmup = 2000, iter_sampling = 2000
 )
 b <- Sys.time()
 logistic.results$stanP0 <-  list(par.est = as.vector(as.matrix(fit.p0$summary(c('r', 'K', 'sigma', 'tau'), 'mean')[,2])),
@@ -120,8 +127,8 @@ logistic.results$stanP0 <-  list(par.est = as.vector(as.matrix(fit.p0$summary(c(
 #use proper vague priors
 a <- Sys.time()
 hyperParameters <- list(
-  hyperSig = c(0.001,0.001), #dgamma
-  hyperTau = c(0.001,0.001), #dgamma
+  hyperSig = c(0.001,0.001), #dinvgamma
+  hyperTau = c(0.001,0.001), #dinvgamma
   hyperTheta1 = c(-1,4), #lognormal
   hyperTheta2 = c(5,4) #lognormal
 )
@@ -130,7 +137,7 @@ Dat$prior_type <- 1
 fit.p1 <- mod$sample(
   data = Dat,
   init = logistic.init,
-  iter_warmup = 4000, iter_sampling = 5000
+  iter_warmup = 2000, iter_sampling = 2000
 )
 b <- Sys.time()
 logistic.results$stanP1 <- list(par.est = as.vector(as.matrix(fit.p1$summary(c('r','K', 'sigma', 'tau'), 'mean')[,2])),

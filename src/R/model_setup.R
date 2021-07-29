@@ -21,7 +21,7 @@ runTMB <- function(dat,mod){
   print('TMB model complete')
   
   a<- Sys.time()
-  tmbstan.mod <- try(tmbstan(obj, init = 'last.par.best', iter = 9000))
+  tmbstan.mod <- try(tmbstan(obj, init = 'last.par.best', iter = 4000))
   b<- Sys.time()
   if(is.null(summary(tmbstan.mod))){
     results$tmbstan <- list(par.est = c(theta = NA, theta = NA, ln_sig = NA, ln_tau = NA),
@@ -40,6 +40,8 @@ runTMB <- function(dat,mod){
       warning('sigma and tau SE in log space, not comparable to other model runs')
     }
   }
+  opt.par <- obj$env$last.par.best
+  results$inits <- opt.par
   print('tmbstan model complete')
   return(results)
 }
