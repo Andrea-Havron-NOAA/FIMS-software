@@ -37,10 +37,10 @@
       vector<Type> eta(n);
       for(t=1; t<n; t++){
         eta(t) = log(u[t-1] + r*u[t-1]*(1-u[t-1]/K));
-        nll -= dnorm(u[t], eta[t], sigma, true);
+        nll -= dlognorm(u[t], eta[t], sigma, true);
       }
       for(t=0; t<n; t++){
-        nll -= dlnorm(y[t],log(u[t]),tau,true);
+        nll -= dlognorm(y[t],log(u[t]),tau,true);
       }
       return nll;
     }
