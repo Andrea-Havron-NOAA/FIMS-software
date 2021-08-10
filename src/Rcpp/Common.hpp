@@ -6,6 +6,8 @@
 #ifdef TMB_MODEL
 
 #include <TMB.hpp>
+#include <Rcpp.h>
+using namespace Rcpp;
 
 template<typename Type>
 struct model_traits{
@@ -18,10 +20,6 @@ T exp(const T& x){
   return exp(x);
 }
 
-template<typename T>
-T log(const T& x){
-  return log(x);
-}
 
 #endif
 
