@@ -32,7 +32,6 @@ Type objective_function<Type>::operator() ()
 
   //Spatial Likelihood
   //Define precision matrix
-  //if(sparse == 0) Matrix<Type> Q = pow(kappa,4) * M0 + 2 * pow(kappa,2) * M1 + M2;
   SparseMatrix<Type> Q = pow(kappa,4) * M0 + 2 * pow(kappa,2) * M1 + M2;
   nll += SCALE(GMRF(Q), 1/tau)(omega);  
   SIMULATE{
