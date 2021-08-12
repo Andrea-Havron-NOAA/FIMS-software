@@ -1,10 +1,20 @@
 #runs TMB and tmbstan
 runTMB <- function(dat,mod){
   results <- list()
-  setupTMB()
-  Dat <- mkTMBdat(dat, mod)
-  Par <- do.call(paste0(mod,'.init'), args = list())
-  obj <- MakeADFun(Dat, Par, random = 'u')
+  if(mod != 'spatial'){
+    setupTMB(dll.name = 'statespace')
+    Dat <- mkTMBdat(dat, mod)
+    Par <- do.call(paste0(mod,'.init'), args = list())
+    Random <- 'u'
+  }
+  if(mod == 'spatial'){
+    setupTMB(dll.name = 'spatial_poisson')
+    inits <- mkSpatialInits(dat)
+    Dat <- inits$Dat
+    Par <- inits$Par
+    Random = 'omega'
+  }
+  obj <- MakeADFun(Dat, Par, random = Random)
   a<- Sys.time()
   tmb.mod <- nlminb( obj$par, obj$fn, obj$gr )
   sdr <- sdreport(obj)

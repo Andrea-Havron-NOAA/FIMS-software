@@ -15,14 +15,11 @@
     Type ln_sig;
     Type ln_tau;
     static logisticGrowth<Type>* instance;
-    
+
     
     logisticGrowth(){}
     
     static logisticGrowth<Type>* getinstance(){
-      //if(logisticGrowth<Type>::instance==NULL){
-      //  logisticGrowth<Type>::instance=new logisticGrowth<Type>();
-      //}
       return logisticGrowth<Type>::instance;
     }
     
@@ -36,12 +33,20 @@
       Type nll = 0;
       vector<Type> eta(n);
       for(t=1; t<n; t++){
-        eta(t) = log(u[t-1] + r*u[t-1]*(1-u[t-1]/K));
-        nll -= dlognorm(u[t], eta[t], sigma, true);
+        eta(t) = u[t-1] + r * u[t-1] * (1-u[t-1]/K);
+        nll -= dlognorm(u[t], log(eta[t]), sigma, true);
       }
       for(t=0; t<n; t++){
         nll -= dlognorm(y[t],log(u[t]),tau,true);
       }
+      
+      //Reporting
+      REPORT(r);
+      REPORT(K);
+      ADREPORT(r);
+      ADREPORT(K);
+      REPORT(u);
+      
       return nll;
     }
 
