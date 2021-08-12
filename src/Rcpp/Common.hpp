@@ -20,6 +20,8 @@ T exp(const T& x){
   return exp(x);
 }
 
+template <class T>
+const T log(const T& x){return std::log(x);}
 
 #endif
 
