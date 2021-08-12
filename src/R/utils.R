@@ -7,12 +7,12 @@
 #'
 #' @return DLL is compiled and loaded
 #' @export
-setupTMB <- function(comp=FALSE){
+setupTMB <- function(dll.name, comp=FALSE){
   if(comp==TRUE){
-    try(dynlib(dyn.unload('src/tmb/stateSpace')))
-    TMB::compile('src/tmb/stateSpace.cpp')
+    try(dynlib(dyn.unload(paste0('src/tmb/', dll.name))))
+    TMB::compile(paste0('src/tmb/', dll.name))
   }
-  suppressWarnings(dynlib(dyn.load('src/tmb/stateSpace')))
+  suppressWarnings(dynlib(dyn.load(paste0('src/tmb/', dll.name))))
 }
 
 #' Make TMB data list 
@@ -62,3 +62,26 @@ mkSTANdat <- function(obs,
   
 }
 
+
+mkSpatialInits <- function(df){
+  Loc <- df[,1:2]
+  y <- df[,3]
+  
+  #build INLA mesh
+  mesh <- inla.mesh.2d(Loc, max.edge = c(10,20), offset = c(5,25))
+  #calculate sparse distance matrix components
+  spde <- inla.spde2.matern(mesh)
+  
+  Dat <- list(y = y,
+              v_i = mesh$idx$loc-1,
+              sparse = 1,
+              M0 = spde$param.inla$M0,
+              M1 = spde$param.inla$M1,
+              M2 = spde$param.inla$M2)
+  Par <- list(b0 = 0,
+              ln_kappa = 0,
+              ln_tau = 0,
+              omega = rep(0,mesh$n))
+  init.list <- list(Dat = Dat, Par = Par)
+  return(init.list)
+}

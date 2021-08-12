@@ -3,8 +3,9 @@ library(TMB)
 library(tmbstan)
 library(cmdstanr)
 library(profvis)
+library(INLA)
 
-source('data/simdata_logistic.R')
+source('data/simdata.R')
 source('src/R/utils.R')
 source('src/R/model_setup.R')
 
@@ -102,4 +103,14 @@ for(i in 1:length(n.seq)){
   sapply(logistic.results, function(x) x$time)
   sapply(logistic.results, function(x) x$meanESS)
   sapply(logistic.results, function(x) x$minESS)
+  
+  #spatial
+  Mod <- 'spatial'
+  simdata <- gendat(seed=123,
+                    N=n,
+                    theta = c(2,50,0.75), #c(b0,Range,sp.var)
+                    u1 = NA,
+                    var = NA,
+                    mod.name = Mod)
+  spatial.results <- runTMB(simdata, Mod)
 }
