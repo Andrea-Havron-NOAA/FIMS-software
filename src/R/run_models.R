@@ -1,8 +1,13 @@
-library(rstan)
+## install CRAN packages
+# install.packages("TMB", "tmbstan")
+
+## install packages not on CRAN
+# install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+# install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
+
 library(TMB)
 library(tmbstan)
 library(cmdstanr)
-library(profvis)
 library(INLA)
 
 source('data/simdata.R')
@@ -113,4 +118,6 @@ for(i in 1:length(n.seq)){
                     var = NA,
                     mod.name = Mod)
   spatial.results <- runTMB(simdata, Mod)
+  save(spatial.results, file = 'results/spatial_n100.RData')
+  
 }
