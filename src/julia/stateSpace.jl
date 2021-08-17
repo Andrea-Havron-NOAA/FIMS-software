@@ -7,6 +7,7 @@ using Optim
 using Memoization
 using Zygote
 using ReverseDiff
+using BenchmarkTools
 
 #Gompertz model
 @model function gompertz(y, pr_type)
@@ -81,13 +82,13 @@ mle_estimate = optimize(gompertz(gompertzDat, 0), MLE())
 #ReverseDiff: 505 sec using 1000 burn-in and 0.8 adaptive sampling
 #NUTS() working but not same as default STAN/tmbstan settings (2000,0.8)
 Turing.setadbackend(:reversediff)
-t1 = @time sampNUTSgompertzP0 = sample(gompertz(gompertzDat,0), NUTS(1000,0.8), 2000, nchains = 4, init_theta = gompertzInits)
+@time sampNUTSgompertzP0 = sample(gompertz(gompertzDat,0), NUTS(1000,0.8), 2000, nchains = 4, init_theta = gompertzInits)
 describe(sampNUTSgompertzP0)
 sampNUTSgompertzP0
 #TrackerAD: 44.5 sec
 #Zygote: didn't work: mutating arrays not supported
 #ReverseDiff: 20 sec, 3140 sec after chaging settings and running first, 20 sec after running a third time: 3120 sec to compile?
-t1 = @timed sampNUTSgompertzP1 = sample(gompertz(gompertzDat,1), NUTS(1000,0.8), 2000, nchains = 4, init_theta = gompertzInits)
+@time sampNUTSgompertzP1 = sample(gompertz(gompertzDat,1), NUTS(1000,0.8), 2000, nchains = 4, init_theta = gompertzInits)
 describe(sampNUTSgompertzP1)
 alpha = mean(sampNUTSgompertz[:alpha])
 beta = mean(sampNUTSgompertz[:beta])
