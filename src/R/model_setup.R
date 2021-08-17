@@ -24,7 +24,13 @@ runTMB <- function(dat,mod){
                         se.est = c(summary(sdr)[1:2,1],summary(sdr,'report')[,2]),
                         time = as.numeric(difftime(b,a, units = 'mins')), 
                         stan.time = NA, meanESS = NA, minESS = NA)
-  } else {
+  }
+  if(mod == 'spatial'){
+    results$tmb <- list(par.est = summary(sdr,'fixed')[,1],
+                        se.est = summary(sdr,'fixed')[,2],
+                        time = as.numeric(difftime(b,a, units = 'mins')), 
+                        stan.time = NA, meanESS = NA, minESS = NA)
+  if(mod == 'logistic'){
     results$tmb <- list(par.est = summary(sdr,'report')[,1],
                         se.est = summary(sdr,'report')[,2],
                         time = as.numeric(difftime(b,a, units = 'mins')), 
