@@ -39,14 +39,7 @@
       for(t=0; t<n; t++){
         nll -= dlognorm(y[t],log(u[t]),tau,true);
       }
-      
-      //Reporting
-      REPORT(r);
-      REPORT(K);
-      ADREPORT(r);
-      ADREPORT(K);
-      REPORT(u);
-      
+ 
       return nll;
     }
 

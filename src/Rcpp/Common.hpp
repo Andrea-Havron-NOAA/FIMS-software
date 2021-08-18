@@ -6,8 +6,8 @@
 #ifdef TMB_MODEL
 
 #include <TMB.hpp>
-#include <Rcpp.h>
-using namespace Rcpp;
+//#include <Rcpp.h>
+//using namespace Rcpp;
 
 template<typename Type>
 struct model_traits{
