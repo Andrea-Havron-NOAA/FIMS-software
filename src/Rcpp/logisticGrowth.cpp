@@ -22,5 +22,12 @@ Type objective_function<Type>::operator()(){
   inst->u = u;
   
   return inst -> evaluate();
+  
+  //Reporting
+  //REPORT(r);
+  //REPORT(K);
+  //ADREPORT(r);
+  //ADREPORT(K);
+  //REPORT(u);
 }
 
