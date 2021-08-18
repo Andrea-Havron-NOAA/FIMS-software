@@ -5,3 +5,6 @@
 .DS_Store
 src/stan/bugs
 data/tuna.R
+.o
+.dll
+.exe
