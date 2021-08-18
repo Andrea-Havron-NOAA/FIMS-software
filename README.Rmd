@@ -18,4 +18,39 @@ knitr::opts_chunk$set(
 
 The goal of FIMS architecture project is to compare statistical computing environments for use in the [FIMS](https://www.fisheries.noaa.gov/national/population-assessments/fisheries-integrated-modeling-system) intiative. This is ongoing research. For more details, see the [Working Document](https://andrea-havron-noaa.github.io/FIMSarch/docs/FIMS-architecture-exploratory-analysis.html)
 
+## Resources
+* [Julia GitHub](https://github.com/JuliaLang/julia)
+* [Stan User's Guide](https://mc-stan.org/docs/2_19/stan-users-guide/)
+* [Stan GitHub](https://github.com/stan-dev/stan)
+* [cmdstan GitHub](https://github.com/stan-dev/stan)
+* [TMB Documentation](https://kaskr.github.io/adcomp/_book/Introduction.html)
+* [TMB GitHub](https://github.com/kaskr/adcomp)
 
+
+## FIMS Architecture Organization
+The FIMS architecture project is organized as follows:
+
+```{r, toc, echo = FALSE, warning = FALSE}
+library(pander)
+library(kableExtra)
+df <- data.frame(Directory = c("data",'docs','results','src','\\\ \\\ src/julia','\\\ \\\ src/R', '\\\ \\\ src/Rcpp', '\\\ \\\ src/stan', '\\\ \\\ src/tmb'),
+                 Description = c("data simulation script, simulated data files, and initial values files",
+                                 "working documents detailing project and results",
+                                 "results files from benchmark study",
+                                 "source files for project",
+                                 "* stateSpace.jl: julia file that specifies and run gompertz and logistic models",
+                                 "* model_setup.R: code used to setup TMB and Stan models
+                                 \\\n * modular_demo.R: code runs modular example of passing C++ code to different platforms
+                                 \\\n * run_models.R: runs different platforms for benchmark study excluding julia
+                                 \\\n * utils.R: base functions for R code",
+                                 "* Common.hpp:
+                                 \\\n * likelihoods.hpp: likelihood definitions
+                                 \\\n * logisticGrowth.cpp: TMB model specification
+                                 \\\n * model.hpp: C++ model definitions",
+                                 "* gompertz.stan: gompertz model
+                                 \\\n * logistic.stan: logistic growth model",
+                                 "* sptail_poisson.cpp: spatially explicit Poisson model
+                                 \\\n * stateSpace.cpp: gompertz and logistic growth model"))
+pander(df, keep.line.breaks = TRUE, style = 'grid', justify = 'left')
+#kbl(df)
+```
