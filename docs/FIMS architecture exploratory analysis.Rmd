@@ -8,6 +8,9 @@ output: html_vignette
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(kableExtra)
+library(magrittr)
+library(tidyr)
+library(ggplot2)
 options(knitr.table.format = "latex") 
 ```
 
@@ -16,7 +19,7 @@ options(knitr.table.format = "latex")
 
 The Fisheries Integrated Management Systems aims to offer a system of modular, maintainable, and extensible models for next generation stock assessments. The choice of software platform used to develop FIMS will heavily influence the success of the initiative. While a thorough review of FIMS requirements is currently underway, a concurrent exploration of candidate software platforms will provide insight that will guide final decisions once software requirements have been established.
 
-This project aims to produce a comprehensive review of available statistical computing platforms and summarize their suitability with respect to FIMS. THe cross-comparison study will focus on state-space and explicit spatio-temporal modeling. Models will be developed and implemented across the following software platforms: TMB, C++, Julia, Greta tensorflow, and Stan. Inference pathways for both frequentist and Bayesian inference will be outlined for each platform when applicable. Under consideration will be performance, speed, the usability of the software with respect to both the user and developer, and software features that meet FIMS requirements under consideration.
+This project aims to produce a comprehensive review of available statistical computing platforms and summarize their suitability with respect to FIMS. The cross-comparison study will focus on state-space and explicit spatio-temporal modeling. Models will be developed and implemented across the following software platforms: TMB, C++, Julia, Greta tensorflow, and Stan. Inference pathways for both frequentist and Bayesian inference will be outlined for each platform when applicable. Under consideration will be performance, speed, the usability of the software with respect to both the user and developer, and software features that meet FIMS requirements under consideration.
 
 # Models
 
@@ -101,31 +104,55 @@ Machine learning approach to Bayesian inference
 load('../results/gompertz.RData')
 df <- as.data.frame(cbind(true=c(2,0.8,0.1,0.5),sapply(gompertz.results, function(x) x$par.est)))
 row.names(df) <- c('$\\theta_{1}$', '$\\theta_{2}$', '$\\sigma_{proc}$','$\\sigma_{obs}$')
-kbl(df,booktabs = TRUE, caption = 'Parameter estimates for state-space gompertz model', digits = 3, label = 'SSgompMu')
+kbl(df,booktabs = TRUE, caption = 'Parameter estimates for state-space gompertz model (n=100)', digits = 3, label = 'SSgompMu')
 
 df <- as.data.frame(sapply(gompertz.results, function(x) x$se.est))
 row.names(df) <- c('$\\theta_{1}$', '$\\theta_{2}$', '$\\sigma_{proc}$','$\\sigma_{obs}$')
-kbl(df,booktabs = TRUE, caption = 'Standard error estimates for state-space gompertz model', digits = 3, label = 'SSgompSE')
+kbl(df,booktabs = TRUE, caption = 'Standard error estimates for state-space gompertz model (n=100)', digits = 3, label = 'SSgompSE')
 
 df <- data.frame('time (min)' = sapply(gompertz.results, function(x) x$time))
-kbl(df,booktabs = TRUE, caption = 'Run times for state-space gompertz model', digits = 3, label = 'SSgompTime')
+kbl(df,booktabs = TRUE, caption = 'Run times for state-space gompertz model (n=100)', digits = 3, label = 'SSgompTime')
 ```
 
 
-#### State-Space Logistic Results
+#### State-Space logistic growth results
 ```{r tableSSlogisticMean, echo = FALSE, warnings = FALSE}
 load('../results/logistic.RData')
 df <- as.data.frame(cbind(true=c(0.2,100L,0.01,0.001),sapply(logistic.results, function(x) x$par.est)))
 row.names(df) <- c('r', 'K', '$\\sigma_{proc}$','$\\sigma_{obs}$')
-kbl(df,booktabs = TRUE, caption = 'Parameter estimates for state-space logistic model', label = 'SSlogMu', format.args = list(scientific = FALSE))
+kbl(df,booktabs = TRUE, caption = 'Parameter estimates for state-space logistic model (n=100)', label = 'SSlogMu', format.args = list(scientific = FALSE))
 
 df <- as.data.frame(sapply(logistic.results, function(x) x$se.est))
 row.names(df) <- c('r', 'K', '$\\sigma_{proc}$','$\\sigma_{obs}$')
-kbl(df,booktabs = TRUE, caption = 'Standard error estimates for state-space logistic model', digits = 3, label = 'SSlogSE')
+kbl(df,booktabs = TRUE, caption = 'Standard error estimates for state-space logistic model (n=100)', digits = 3, label = 'SSlogSE')
 
 df <- data.frame('time (min)' = sapply(logistic.results, function(x) x$time))
-kbl(df,booktabs = TRUE, caption = 'Run times for state-space logistic model', digits = 3, label = 'SSlogTime')
+kbl(df,booktabs = TRUE, caption = 'Run times for state-space logistic model (n=100)', digits = 3, label = 'SSlogTime')
 ```
+
+#### Benchmark results for logistic growth model
+```{r, echo = FALSE, warnings = FALSE, fig.height = 6, fig.width = 6}
+n.seq <- seq(5,11,1)
+plot.res <- c()
+for(i in 1:length(n.seq)){
+  n <- 2^n.seq[i]
+  load( paste0('../results/logistic/logistic', '_n', n, '.RData'))
+  plot.res <- rbind(plot.res, sapply(logistic.results, function(x) x$meanESS)[2:4]/
+    sapply(logistic.results, function(x) x$time)[2:4])
+  plot.res <- rbind(plot.res, sapply(logistic.results, function(x) x$minESS)[2:4])
+  plot.res <- rbind(plot.res, sapply(logistic.results, function(x) x$time)[2:4])
+}
+colnames(plot.res) <- names(logistic.results)[2:4]
+plot.res %<>% as.data.frame()
+plot.res$metric <- rep(c('MCMC efficiency', 'min ESS', 'time'), length(n.seq))
+plot.res$nsamp <- rep(2^n.seq, each = 3)
+plot.res %>% 
+  pivot_longer(., 1:3, names_to = 'model', values_to = 'value') %>%
+  ggplot(., aes(x=nsamp, y=value,col=model)) + geom_line() + 
+  theme_classic() + facet_wrap(~metric, scales = 'free', ncol=1)
+
+```
+
 
 
 ### Inference Pathways
