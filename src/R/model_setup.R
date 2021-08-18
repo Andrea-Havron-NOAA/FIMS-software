@@ -1,8 +1,8 @@
 #runs TMB and tmbstan
-runTMB <- function(dat,mod){
+runTMB <- function(dat,mod,seed=123){
   results <- list()
   if(mod != 'spatial'){
-    setupTMB(dll.name = 'statespace')
+    setupTMB(dll.name = 'stateSpace')
     Dat <- mkTMBdat(dat, mod)
     Par <- do.call(paste0(mod,'.init'), args = list())
     Random <- 'u'
@@ -14,6 +14,7 @@ runTMB <- function(dat,mod){
     Par <- inits$Par
     Random = 'omega'
   }
+  set.seed(seed)
   obj <- MakeADFun(Dat, Par, random = Random)
   a<- Sys.time()
   tmb.mod <- nlminb( obj$par, obj$fn, obj$gr )
@@ -30,6 +31,7 @@ runTMB <- function(dat,mod){
                         se.est = summary(sdr,'fixed')[,2],
                         time = as.numeric(difftime(b,a, units = 'mins')), 
                         stan.time = NA, meanESS = NA, minESS = NA)
+  }
   if(mod == 'logistic'){
     results$tmb <- list(par.est = summary(sdr,'report')[,1],
                         se.est = summary(sdr,'report')[,2],
@@ -39,7 +41,7 @@ runTMB <- function(dat,mod){
   print('TMB model complete')
   
   a<- Sys.time()
-  tmbstan.mod <- try(tmbstan(obj, init = 'last.par.best', iter = 4000))
+  tmbstan.mod <- try(tmbstan(obj, seed = seed, init = 'last.par.best', iter = 4000))
   b<- Sys.time()
   mon <- monitor(tmbstan.mod)
   
@@ -71,7 +73,7 @@ runTMB <- function(dat,mod){
 }
 
 #runs stan - not working yet
-runSTAN <- function(dat,mod,prType){
+runSTAN <- function(dat,mod,prType,seed=123){
   a <- Sys.time()
   if(prType == 0){
     hyperParameters <- list(
@@ -103,6 +105,7 @@ runSTAN <- function(dat,mod,prType){
   Par <- get(paste0(mod,'.init'))
   fit <- model$sample(
     data = Dat,
+    seed = seed,
     init = Par,
     iter_warmup = 2000, iter_sampling = 2000
   )

@@ -31,7 +31,7 @@ for(i in 1:length(n.seq)){
   #run simulation models
   #gompertz
   Mod <- 'gompertz'
-  simdata <- gendat(seed=123,
+  simdata <- gendat(seed=i,
                     N=n,
                     theta = c(2,0.8),
                     u1 = 4,
@@ -79,7 +79,7 @@ for(i in 1:length(n.seq)){
          u = rep(1,n))
   }
   
-  simdata <- gendat(seed=123,
+  simdata <- gendat(seed=i,
                     N=n,
                     theta = c(0.2,100),
                     u1 = 4,
@@ -110,14 +110,34 @@ for(i in 1:length(n.seq)){
   sapply(logistic.results, function(x) x$minESS)
   
   #spatial
-  Mod <- 'spatial'
-  simdata <- gendat(seed=123,
-                    N=n,
-                    theta = c(2,50,0.75), #c(b0,Range,sp.var)
-                    u1 = NA,
-                    var = NA,
-                    mod.name = Mod)
-  spatial.results <- runTMB(simdata, Mod)
-  save(spatial.results, file = 'results/spatial_n100.RData')
+  # Mod <- 'spatial'
+  # simdata <- gendat(seed=i,
+  #                   N=n,
+  #                   theta = c(2,50,0.75), #c(b0,Range,sp.var)
+  #                   u1 = NA,
+  #                   var = NA,
+  #                   mod.name = Mod)
+  # spatial.results <- runTMB(simdata, Mod)
+  # save(spatial.results, file = 'results/spatial_n100.RData')
   
 }
+library(magrittr)
+library(tidyr)
+plot.res <- c()
+for(i in 1:length(n.seq)){
+  n <- 2^n.seq[i]
+  load( paste0('results/logistic/logistic', '_n', n, '.RData'))
+  plot.res <- rbind(plot.res, sapply(logistic.results, function(x) x$meanESS)[2:4]/
+    sapply(logistic.results, function(x) x$time)[2:4])
+  plot.res <- rbind(plot.res, sapply(logistic.results, function(x) x$minESS)[2:4])
+  plot.res <- rbind(plot.res, sapply(logistic.results, function(x) x$time)[2:4])
+}
+colnames(plot.res) <- names(logistic.results)[2:4]
+plot.res %<>% as.data.frame()
+plot.res$metric <- rep(c('MCMC efficiency', 'min ESS', 'time'), length(n.seq))
+plot.res$nsamp <- rep(2^n.seq, each = 3)
+plot.res %>% 
+  pivot_longer(., 1:3, names_to = 'model', values_to = 'value') %>%
+  ggplot(., aes(x=nsamp, y=value,col=model)) + geom_line() + 
+  theme_classic() + facet_wrap(~metric, scales = 'free', ncol=1)
+
