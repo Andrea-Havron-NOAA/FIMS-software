@@ -8,9 +8,10 @@
 #' @return DLL is compiled and loaded
 #' @export
 setupTMB <- function(dll.name, comp=FALSE){
-  if(comp==TRUE){
+  if(!(paste0(dll.name, '.dll') %in% list.files('src/tmb')) |
+      comp==TRUE){
     try(dynlib(dyn.unload(paste0('src/tmb/', dll.name))))
-    TMB::compile(paste0('src/tmb/', dll.name))
+    TMB::compile(paste0('src/tmb/', dll.name,'.cpp'))
   }
   suppressWarnings(dynlib(dyn.load(paste0('src/tmb/', dll.name))))
 }
