@@ -1,8 +1,13 @@
-library(rstan)
+## install CRAN packages
+# install.packages("TMB", "tmbstan")
+
+## install packages not on CRAN
+# install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+# install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
+
 library(TMB)
 library(tmbstan)
 library(cmdstanr)
-library(profvis)
 library(INLA)
 
 source('data/simdata.R')
@@ -101,14 +106,14 @@ sapply(logistic.results, function(x) x$se.est)
 sapply(logistic.results, function(x) x$time)
 sapply(logistic.results, function(x) x$meanESS)
 sapply(logistic.results, function(x) x$minESS)
-
-#spatial
-Mod <- 'spatial'
-simdata <- gendat(seed=123,
-                  N=n,
-                  theta = c(2,50,0.75), #c(b0,Range,sp.var)
-                  u1 = NA,
-                  var = NA,
-                  mod.name = Mod)
-spatial.results <- runTMB(simdata, Mod)
+# 
+# #spatial
+# Mod <- 'spatial'
+# simdata <- gendat(seed=123,
+#                   N=n,
+#                   theta = c(2,50,0.75), #c(b0,Range,sp.var)
+#                   u1 = NA,
+#                   var = NA,
+#                   mod.name = Mod)
+# spatial.results <- runTMB(simdata, Mod)
 
