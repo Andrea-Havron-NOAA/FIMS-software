@@ -11,8 +11,8 @@ library(cmdstanr)
 library(INLA)
 
 source('data/simdata.R')
-source('src/R/utils.R')
-source('src/R/model_setup.R')
+source('R/utils.R')
+source('R/model_setup.R')
 
 #Implement simulation for n = 2^seq(5,11,1)
 n.seq <- seq(5,11,1)
