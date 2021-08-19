@@ -1,5 +1,5 @@
 ---
-title: "FIMS architecture exploratory analysis"
+title: "FIMS software platform exploratory analysis"
 author: "Andrea Havron"
 date: "7/20/2021"
 output: html_vignette

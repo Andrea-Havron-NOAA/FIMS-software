@@ -1,16 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# FIMSarch
+# FIMS-software
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of FIMS architecture project is to compare statistical
+The goal of FIMS software platform project is to compare statistical
 computing environments for use in the
 [FIMS](https://www.fisheries.noaa.gov/national/population-assessments/fisheries-integrated-modeling-system)
 intiative. This is ongoing research. For more details, see the [Working
-Document](https://andrea-havron-noaa.github.io/FIMSarch/docs/FIMS-architecture-exploratory-analysis.html)
+Document](https://andrea-havron-noaa.github.io/FIMS-software/docs/FIMS-software-exploratory-analysis.html)
 
 ## Resources
 
@@ -22,9 +22,9 @@ Document](https://andrea-havron-noaa.github.io/FIMSarch/docs/FIMS-architecture-e
     Documentation](https://kaskr.github.io/adcomp/_book/Introduction.html)
 -   [TMB GitHub](https://github.com/kaskr/adcomp)
 
-## FIMS Architecture Organization
+## FIMS Software Organization
 
-The FIMS architecture project is organized as follows:
+The FIMS software platform project is organized as follows:
 
 <table style="width:68%;">
 <colgroup>
@@ -47,21 +47,7 @@ The FIMS architecture project is organized as follows:
 <td>working documents detailing project and results</td>
 </tr>
 <tr class="odd">
-<td>results</td>
-<td>results files from benchmark study</td>
-</tr>
-<tr class="even">
-<td>src</td>
-<td>source files for project</td>
-</tr>
-<tr class="odd">
-<td>  src/julia</td>
-<td><ul>
-<li>stateSpace.jl: julia file that specifies and run gompertz and logistic models</li>
-</ul></td>
-</tr>
-<tr class="even">
-<td>  src/R</td>
+<td>R</td>
 <td><ul>
 <li>model_setup.R: code used to setup TMB and Stan models<br />
 </li>
@@ -70,6 +56,20 @@ The FIMS architecture project is organized as follows:
 <li>run_models.R: runs different platforms for benchmark study excluding julia<br />
 </li>
 <li>utils.R: base functions for R code</li>
+</ul></td>
+</tr>
+<tr class="even">
+<td>results</td>
+<td>results files from benchmark study</td>
+</tr>
+<tr class="odd">
+<td>src</td>
+<td>source files for project</td>
+</tr>
+<tr class="even">
+<td>  src/julia</td>
+<td><ul>
+<li>stateSpace.jl: julia file that specifies and run gompertz and logistic models</li>
 </ul></td>
 </tr>
 <tr class="odd">

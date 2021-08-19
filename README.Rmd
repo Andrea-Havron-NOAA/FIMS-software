@@ -11,12 +11,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-# FIMSarch
+# FIMS-software
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of FIMS architecture project is to compare statistical computing environments for use in the [FIMS](https://www.fisheries.noaa.gov/national/population-assessments/fisheries-integrated-modeling-system) intiative. This is ongoing research. For more details, see the [Working Document](https://andrea-havron-noaa.github.io/FIMSarch/docs/FIMS-architecture-exploratory-analysis.html)
+The goal of FIMS software platform project is to compare statistical computing environments for use in the [FIMS](https://www.fisheries.noaa.gov/national/population-assessments/fisheries-integrated-modeling-system) intiative. This is ongoing research. For more details, see the [Working Document](https://andrea-havron-noaa.github.io/FIMS-software/docs/FIMS-software-exploratory-analysis.html)
 
 ## Resources
 * [Julia GitHub](https://github.com/JuliaLang/julia)
@@ -27,22 +27,22 @@ The goal of FIMS architecture project is to compare statistical computing enviro
 * [TMB GitHub](https://github.com/kaskr/adcomp)
 
 
-## FIMS Architecture Organization
-The FIMS architecture project is organized as follows:
+## FIMS Software Organization
+The FIMS software platform project is organized as follows:
 
 ```{r, toc, echo = FALSE, warning = FALSE}
 library(pander)
 library(kableExtra)
-df <- data.frame(Directory = c("data",'docs','results','src','\\\ \\\ src/julia','\\\ \\\ src/R', '\\\ \\\ src/Rcpp', '\\\ \\\ src/stan', '\\\ \\\ src/tmb'),
+df <- data.frame(Directory = c("data",'docs','R','results','src','\\\ \\\ src/julia', '\\\ \\\ src/Rcpp', '\\\ \\\ src/stan', '\\\ \\\ src/tmb'),
                  Description = c("data simulation script, simulated data files, and initial values files",
                                  "working documents detailing project and results",
-                                 "results files from benchmark study",
-                                 "source files for project",
-                                 "* stateSpace.jl: julia file that specifies and run gompertz and logistic models",
                                  "* model_setup.R: code used to setup TMB and Stan models
                                  \\\n * modular_demo.R: code runs modular example of passing C++ code to different platforms
                                  \\\n * run_models.R: runs different platforms for benchmark study excluding julia
                                  \\\n * utils.R: base functions for R code",
+                                 "results files from benchmark study",
+                                 "source files for project",
+                                 "* stateSpace.jl: julia file that specifies and run gompertz and logistic models",
                                  "* Common.hpp:
                                  \\\n * likelihoods.hpp: likelihood definitions
                                  \\\n * logisticGrowth.cpp: TMB model specification
