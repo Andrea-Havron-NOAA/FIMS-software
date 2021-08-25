@@ -1,7 +1,12 @@
 library(TMB)
 compile("src/Rcpp/logisticGrowth.cpp", flags= "-w")
 dyn.load(dynlib("src/Rcpp/logisticGrowth"))
-y <- read.csv('data/logistic/logistic_n128.csv')$y
+simdata <- gendat(seed=123,
+                  N=100,
+                  theta = c(0.2,100),
+                  u1 = 4,
+                  var = list(proc=0.01,obs=0.001),
+                  mod.name = 'logistic')
 
 dat <- list(y=y)
 par <- list(theta = c(log(0.5), log(80)), ln_sig=-1,ln_tau=-1,
