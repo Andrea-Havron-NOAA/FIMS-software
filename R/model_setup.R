@@ -1,9 +1,9 @@
 #runs TMB and tmbstan
-runTMB <- function(dat,mod,seed=123){
+runTMB <- function(dat,mod,seed=123,prType=0){
   results <- list()
   if(mod != 'spatial'){
     setupTMB(dll.name = 'stateSpace')
-    Dat <- mkTMBdat(dat, mod)
+    Dat <- mkTMBdat(dat, mod, prType)
     Par <- do.call(paste0(mod,'.init'), args = list())
     Random <- 'u'
   }
@@ -11,7 +11,7 @@ runTMB <- function(dat,mod,seed=123){
     setupTMB(dll.name = 'spatial_poisson')
     inits <- mkSpatialInits(dat)
     Dat <- inits$Dat
-    Par <- inits$Par
+    Par <- inits$Par()
     Random = 'omega'
   }
   set.seed(seed)
@@ -20,15 +20,16 @@ runTMB <- function(dat,mod,seed=123){
   tmb.mod <- nlminb( obj$par, obj$fn, obj$gr )
   sdr <- sdreport(obj)
   b <- Sys.time()
+  opt.par <- obj$env$last.par.best
   if(mod == 'gompertz'){
     results$tmb <- list(par.est = c(summary(sdr)[1:2,1],summary(sdr,'report')[,1]),
-                        se.est = c(summary(sdr)[1:2,1],summary(sdr,'report')[,2]),
+                        se.est = c(summary(sdr)[1:2,2],summary(sdr,'report')[,2]),
                         time = as.numeric(difftime(b,a, units = 'mins')), 
                         stan.time = NA, meanESS = NA, minESS = NA)
   }
   if(mod == 'spatial'){
-    results$tmb <- list(par.est = summary(sdr,'fixed')[,1],
-                        se.est = summary(sdr,'fixed')[,2],
+    results$tmb <- list(par.est = c(summary(sdr,'fixed')[1,1],summary(sdr,'report')[,1]),
+                        se.est = c(summary(sdr,'fixed')[1,2],summary(sdr,'report')[,2]),
                         time = as.numeric(difftime(b,a, units = 'mins')), 
                         stan.time = NA, meanESS = NA, minESS = NA)
   }
@@ -41,6 +42,7 @@ runTMB <- function(dat,mod,seed=123){
   print('TMB model complete')
   
   a<- Sys.time()
+  obj$env$data$hyperpars <- mkTMBdat(dat, mod, prType=1)$hyperpars
   tmbstan.mod <- try(tmbstan(obj, seed = seed, init = 'last.par.best', iter = 4000))
   b<- Sys.time()
   mon <- monitor(tmbstan.mod)
@@ -66,19 +68,18 @@ runTMB <- function(dat,mod,seed=123){
       warning('sigma and tau SE in log space, not comparable to other model runs')
     }
   }
-  opt.par <- obj$env$last.par.best
+
   results$inits <- opt.par
   print('tmbstan model complete')
   return(results)
 }
 
-#runs stan - not working yet
+#runs stan 
 runSTAN <- function(dat,mod,prType,seed=123){
-  a <- Sys.time()
   if(prType == 0){
     hyperParameters <- list(
-      hyperSig = c(0,0), #dgamma
-      hyperTau = c(0,0), #dgamma
+      hyperSig = 0, #dexp
+      hyperTau = 0, #dexp
       hyperTheta1 = 0, #normal mean
       hyperTheta2 = 0 #normal sd
     )
@@ -89,8 +90,8 @@ runSTAN <- function(dat,mod,prType,seed=123){
   }
   if(prType == 1){
     hyperParameters <- list(
-      hyperSig = c(0.001,0.001), #dinvgamma
-      hyperTau = c(0.001,0.001), #dinvgamma
+      hyperSig = 0.1, #vague exp prior
+      hyperTau = 0.1, #vague exp prior
       hyperTheta1 = 0, #normal mean
       hyperTheta2 = 100 #normal sd
     )
@@ -100,9 +101,11 @@ runSTAN <- function(dat,mod,prType,seed=123){
     }
   }
   Dat <- mkSTANdat(dat,hyperParameters)
+  Dat$prior_type <- prType
   file <- file.path('src', 'stan', paste0(mod, '.stan'))
   model <- cmdstan_model(file) #compile stan model into C++
   Par <- get(paste0(mod,'.init'))
+  a <- Sys.time()
   fit <- model$sample(
     data = Dat,
     seed = seed,
