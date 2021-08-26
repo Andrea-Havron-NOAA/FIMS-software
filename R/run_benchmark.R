@@ -8,7 +8,6 @@
 library(TMB)
 library(tmbstan)
 library(cmdstanr)
-library(INLA)
 
 source('data/simdata.R')
 source('R/utils.R')
@@ -18,8 +17,6 @@ source('R/model_setup.R')
 n.seq <- seq(5,11,1)
 for(i in 1:length(n.seq)){
   n <- 2^n.seq[i]
-  gompertz.results <- list()
-  logistic.results <- list()
   
   gompertz.init <- function(){
     list(theta = c(0,0), ln_sig = 0,
@@ -56,10 +53,10 @@ for(i in 1:length(n.seq)){
   }
   
   #stan
-  #use improper priors to compare with tmbstan
-  gompertz.results$stanP0 <- runSTAN(simdata, Mod,0)
+  # #use improper priors to compare with tmbstan
+  # gompertz.results$stanP0 <- runSTAN(simdata, Mod,0)
   #use vague priors
-  gompertz.results$stanP1 <- runSTAN(simdata, Mod,1)
+  gompertz.results$stan <- runSTAN(simdata, Mod, 1)
   
   save(gompertz.results, file = paste0('results/gompertz/gompertz', '_n', n, '.RData'))
   
@@ -94,12 +91,16 @@ for(i in 1:length(n.seq)){
   save(inits, file = paste0('data/logistic/logisticInits', '_n', n, '.RData'))
   logistic.results <-  list(tmb = results$tmb, tmbstan = results$tmbstan)
   
-  
+  # Init functions
+  logistic.init <- function(){
+    list(theta = results$inits[1:2],
+         ln_sig = results$inits[3],
+         ln_tau = results$inits[4],
+         u = results$inits[5:length(results$inits)])
+  }
   #stan
-  #use improper priors to compare with tmbstan
-  logistic.results$stanP0 <- runSTAN(simdata, Mod,0)
   #use vague priors
-  logistic.results$stanP1 <- runSTAN(simdata, Mod,1)
+  logistic.results$stan <- runSTAN(simdata, Mod,1)
   
   save(logistic.results, file = paste0('results/logistic/logistic', '_n', n, '.RData'))
   #Compare rstan, tmbstan, tmb
@@ -109,17 +110,6 @@ for(i in 1:length(n.seq)){
   sapply(logistic.results, function(x) x$meanESS)
   sapply(logistic.results, function(x) x$minESS)
   
-  #spatial
-  # Mod <- 'spatial'
-  # simdata <- gendat(seed=i,
-  #                   N=n,
-  #                   theta = c(2,50,0.75), #c(b0,Range,sp.var)
-  #                   u1 = NA,
-  #                   var = NA,
-  #                   mod.name = Mod)
-  # spatial.results <- runTMB(simdata, Mod)
-  # save(spatial.results, file = 'results/spatial_n100.RData')
-  
 }
 library(magrittr)
 library(tidyr)
@@ -127,17 +117,17 @@ plot.res <- c()
 for(i in 1:length(n.seq)){
   n <- 2^n.seq[i]
   load( paste0('results/logistic/logistic', '_n', n, '.RData'))
-  plot.res <- rbind(plot.res, sapply(logistic.results, function(x) x$meanESS)[2:4]/
-    sapply(logistic.results, function(x) x$time)[2:4])
-  plot.res <- rbind(plot.res, sapply(logistic.results, function(x) x$minESS)[2:4])
-  plot.res <- rbind(plot.res, sapply(logistic.results, function(x) x$time)[2:4])
+  plot.res <- rbind(plot.res, sapply(logistic.results, function(x) x$meanESS)[2:3]/
+    sapply(logistic.results, function(x) x$time)[2:3])
+  plot.res <- rbind(plot.res, sapply(logistic.results, function(x) x$minESS)[2:3])
+  plot.res <- rbind(plot.res, sapply(logistic.results, function(x) x$time)[2:3])
 }
-colnames(plot.res) <- names(logistic.results)[2:4]
+colnames(plot.res) <- names(logistic.results)[2:3]
 plot.res %<>% as.data.frame()
 plot.res$metric <- rep(c('MCMC efficiency', 'min ESS', 'time'), length(n.seq))
 plot.res$nsamp <- rep(2^n.seq, each = 3)
 plot.res %>% 
-  pivot_longer(., 1:3, names_to = 'model', values_to = 'value') %>%
+  pivot_longer(., 1:2, names_to = 'model', values_to = 'value') %>%
   ggplot(., aes(x=nsamp, y=value,col=model)) + geom_line() + 
   theme_classic() + facet_wrap(~metric, scales = 'free', ncol=1)
 
