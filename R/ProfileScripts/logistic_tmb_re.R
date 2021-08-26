@@ -21,9 +21,10 @@ simdata <- gendat(seed=123,
                   mod.name = Mod)
 
 setupTMB(dll.name = 'stateSpace')
-Dat <- mkTMBdat(simdata, Mod)
+Dat <- mkTMBdat(simdata, Mod, prType=0)
 Random <- 'u'
 set.seed(123)
 obj <- MakeADFun(Dat, logistic.init(), random = Random)
 tmb.mod <- nlminb( obj$par, obj$fn, obj$gr )
 sdr <- sdreport(obj)
+
