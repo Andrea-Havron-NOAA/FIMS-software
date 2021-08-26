@@ -24,13 +24,18 @@ setupTMB <- function(dll.name, comp=FALSE){
 #' @return data list
 #' @export
 #'
-mkTMBdat <- function(obs, modname){
+mkTMBdat <- function(obs, modname, prType){
   dat <- list(y=obs)
   if(modname=='gompertz'){
     dat$mod <- 0
   }
   if(modname=='logistic'){
     dat$mod <- 1
+  }
+  if(prType == 0){
+    dat$hyperpars <- 0
+  } else {
+    dat$hyperpars <- c(-1,4,5,4,0.1,0.1) 
   }
   return(dat)
 }
@@ -48,8 +53,8 @@ mkTMBdat <- function(obs, modname){
 #' @export
 mkSTANdat <- function(obs,
                       hyperParms = list(
-                        hyperSig = c(0.001,0.001),
-                        hyperTau = c(0.001,0.001),
+                        hyperSig = c(0.1),
+                        hyperTau = c(0.1),
                         hyperTheta1 = c(-1,4),
                         hyperTheta2 = c(5,4)
                       )){
@@ -75,14 +80,13 @@ mkSpatialInits <- function(df){
   
   Dat <- list(y = y,
               v_i = mesh$idx$loc-1,
-              sparse = 1,
               M0 = spde$param.inla$M0,
               M1 = spde$param.inla$M1,
               M2 = spde$param.inla$M2)
-  Par <- list(b0 = 0,
-              ln_kappa = 0,
-              ln_tau = 0,
-              omega = rep(0,mesh$n))
-  init.list <- list(Dat = Dat, Par = Par)
+  Par.fn <- function(){
+    list(b0 = 0,ln_kappa = 0,ln_tau = 0,
+          omega = rep(0,mesh$n))
+  }
+  init.list <- list(Dat = Dat, Par = Par.fn)
   return(init.list)
 }
