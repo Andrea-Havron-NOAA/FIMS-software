@@ -11,7 +11,7 @@
     typename model_traits<Type>::data_vector  y;
     // /* Parameter section */
     typename model_traits<Type>::parameter_vector u;
-    vector<Type>theta;
+    typename model_traits<Type>::parameter_vector theta;
     Type ln_sig;
     Type ln_tau;
     static logisticGrowth<Type>* instance;
@@ -31,7 +31,7 @@
       int t;
       int n=y.size();
       Type nll = 0;
-      vector<Type> eta(n);
+      typename model_traits<Type>::parameter_vector eta(n);
       for(t=1; t<n; t++){
         eta(t) = u[t-1] + r * u[t-1] * (1-u[t-1]/K);
         nll -= dlognorm(u[t], log(eta[t]), sigma, true);

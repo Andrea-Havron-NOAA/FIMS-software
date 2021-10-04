@@ -1,4 +1,4 @@
-#include "catch_amalgamated.hpp"
+#include "include/catch_amalgamated.hpp"
 #include "../src/Rcpp/model.hpp"
 
 TEST_CASE( "1 == 1 (pass)", "[single-file]" ) {
