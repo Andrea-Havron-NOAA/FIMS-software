@@ -33,7 +33,7 @@
       Type nll = 0;
       typename model_traits<Type>::parameter_vector eta(n);
       for(t=1; t<n; t++){
-        eta(t) = u[t-1] + r * u[t-1] * (1-u[t-1]/K);
+        eta[t] = u[t-1] + r * u[t-1] * (1-u[t-1]/K);
         nll -= dlognorm(u[t], log(eta[t]), sigma, true);
       }
       for(t=0; t<n; t++){
