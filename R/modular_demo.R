@@ -1,5 +1,5 @@
 library(TMB)
-compile("src/Rcpp/logisticGrowth.cpp", flags= "-w")
+compile("src/Rcpp/logisticGrowth.cpp", flags= "-DTMB_MODEL -w")
 dyn.load(dynlib("src/Rcpp/logisticGrowth"))
 simdata <- gendat(seed=123,
                   N=100,

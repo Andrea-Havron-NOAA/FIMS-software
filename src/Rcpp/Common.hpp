@@ -1,7 +1,7 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
-//#define TMB_MODEL
+// #define TMB_MODEL
 
 #ifdef TMB_MODEL
 
