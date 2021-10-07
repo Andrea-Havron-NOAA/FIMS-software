@@ -6,6 +6,13 @@ runTMB <- function(dat,mod,seed=123,prType=0){
     Dat <- mkTMBdat(dat, mod, prType)
     Par <- do.call(paste0(mod,'.init'), args = list())
     Random <- 'u'
+    if(mod == 'gompertz'){
+      upr.limit <- rep(Inf, length(unlist(Par)))
+      lwr.limit <- rep(-Inf, length(unlist(Par)))
+    } else {
+      lwr.limit <- c(log(0.01), log(0.01), -Inf, -Inf, rep(0.001, length(Par$u)))
+      upr.limit <- c(log(1000), log(1000), rep(Inf, (length(Par$u)+2))) #+2 for ln_sig and ln_tau
+    }
   }
   if(mod == 'spatial'){
     setupTMB(dll.name = 'spatial_poisson')
@@ -13,11 +20,14 @@ runTMB <- function(dat,mod,seed=123,prType=0){
     Dat <- inits$Dat
     Par <- inits$Par()
     Random = 'omega'
+    upr.limit <- rep(Inf, length(unlist(Par)))
+    lwr.limit <- rep(-Inf, length(unlist(Par)))
   }
   set.seed(seed)
   obj <- MakeADFun(Dat, Par, random = Random)
   a<- Sys.time()
-  tmb.mod <- nlminb( obj$par, obj$fn, obj$gr )
+  tmb.mod <- nlminb( obj$par, obj$fn, obj$gr, 
+                     lower = lwr.limit, upper = upr.limit )
   sdr <- sdreport(obj)
   b <- Sys.time()
   opt.par <- obj$env$last.par.best
