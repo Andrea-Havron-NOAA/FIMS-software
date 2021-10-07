@@ -4,8 +4,8 @@
 data{
   int<lower=0> N;
   vector[N] y;
-  vector[2] hyp_sig;
-  vector[2] hyp_tau;
+  real hyp_sig;
+  real hyp_tau;
   real hyp_theta1;
   real hyp_theta2;
   int prior_type;
@@ -42,11 +42,11 @@ model {
       target += normal_lpdf(theta[i] | hyp_theta1,hyp_theta2);
     }
     
-    // prior distribution of sigma2:
-    target += inv_gamma_lpdf(sigma | hyp_sig[1],hyp_sig[2]);
+    // prior distribution of sigma:
+    target += exponential_lpdf(sigma | hyp_sig);
   
-    // prior distribution of tau2: 
-    target += inv_gamma_lpdf(tau | hyp_tau[1],hyp_tau[2]);
+    // prior distribution of tau: 
+    target += exponential_lpdf(tau | hyp_tau);
   }
   //state likelihoods
   //target += normal_lpdf(u[1]| umed[1],sigma);

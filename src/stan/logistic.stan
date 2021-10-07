@@ -4,8 +4,8 @@
 data{
   int<lower=0> N;
   vector[N] y;
-  vector[2] hyp_sig;
-  vector[2] hyp_tau;
+  real hyp_sig;
+  real hyp_tau;
   vector[2] hyp_theta1;
   vector[2] hyp_theta2;
   int prior_type;
@@ -42,18 +42,17 @@ transformed parameters {
 model {
   //prior_type = 0:
   if(prior_type == 1){
-    // prior distribution of r: lognormal with 10% and 90% quantile at 0.13 and 0.48
+    // prior distribution of r:
     target += lognormal_lpdf(r | hyp_theta1[1],hyp_theta1[2]);
   
-    //prior distribution of K: lognormal with 10% and 90% quantile at 80 and 300
+    //prior distribution of K:
     target += lognormal_lpdf(K | hyp_theta2[1],hyp_theta2[2]);
    
-    
-    // prior distribution of sigma2: inv. gamma with 10% and 90% qu. at 0.04 and 0.08
-    target += inv_gamma_lpdf(sigma | hyp_sig[1],hyp_sig[2]);
+    // prior distribution of sigma:
+    target += exponential_lpdf(sigma | hyp_sig);
   
-    // prior distribution of tau2: inv. gamma with 10% and 90% qu. at 0.05 and 0.15
-    target += inv_gamma_lpdf(tau | hyp_tau[1],hyp_tau[2]);
+    // prior distribution of tau: 
+    target += exponential_lpdf(tau | hyp_tau);
   }
   //state likelihoods
   //target += lognormal_lpdf(u[1] | umed[1],sigma);
