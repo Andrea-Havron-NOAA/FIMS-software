@@ -10,10 +10,10 @@
 setupTMB <- function(dll.name, comp=FALSE){
   if(!(paste0(dll.name, '.dll') %in% list.files('src/tmb')) |
       comp==TRUE){
-    try(dynlib(dyn.unload(paste0('src/tmb/', dll.name))))
+    try(dyn.unload(dynlib(paste0('src/tmb/', dll.name))))
     TMB::compile(paste0('src/tmb/', dll.name,'.cpp'))
   }
-  suppressWarnings(dynlib(dyn.load(paste0('src/tmb/', dll.name))))
+  suppressWarnings(dyn.load(dynlib(paste0('src/tmb/', dll.name))))
 }
 
 #' Make TMB data list 
