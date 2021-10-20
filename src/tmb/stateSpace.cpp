@@ -19,17 +19,19 @@ Type objective_function<Type>::operator()()
 {
   DATA_VECTOR(y);
   DATA_INTEGER(mod);
-  
+  DATA_VECTOR(hyperpars); //theta1 mu, theta1 sd, theta2 mu, theta2 sd, sigma, tau
+
   PARAMETER_VECTOR(theta);
   PARAMETER(ln_sig);  Type sigma = exp(ln_sig);
   PARAMETER(ln_tau);  Type tau = exp(ln_tau);
-  
+
   PARAMETER_VECTOR(u);
-  
+
   int n = y.size();
   int t;
   Type nll = 0;
-  
+
+
   vector<Type> eta(n);
   if(mod == 0){
     for(t=1; t<n; t++){
@@ -41,6 +43,15 @@ Type objective_function<Type>::operator()()
   if(mod == 1){
     Type r = exp(theta[0]);
     Type K = exp(theta[1]);
+
+
+    if(hyperpars.size() > 1){
+      nll -= dlnrom(r, hyperpars_theta(0,0), hyperpars_theta(0,1), true);
+      nll -= dlnrom(K, hyperpars_theta(1,0), hyperpars_theta(1,1), true);
+      nll -= dexp(sigma, hyperpars_sd(0));
+      nll -= dexp(tau, hyperpars_sd(1));
+    }
+
     for(t=1; t<n; t++){
       eta(t) = log(u(t-1) + r*u(t-1)*(1-u(t-1)/K));
       nll -= dlnorm(u(t), eta(t), sigma, true);
@@ -57,5 +68,6 @@ Type objective_function<Type>::operator()()
   REPORT(tau);
   ADREPORT(sigma);
   ADREPORT(tau);
+  
   return(nll);
 }
