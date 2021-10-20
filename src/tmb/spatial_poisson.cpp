@@ -13,11 +13,19 @@ Type objective_function<Type>::operator() ()
   DATA_SPARSE_MATRIX(M0); //sparse distance matrices
   DATA_SPARSE_MATRIX(M1); //sparse distance matrices
   DATA_SPARSE_MATRIX(M2); //sparse distance matrices
-  DATA_MATRIX(hyperpars); // r1:ln_kappa, r2:ln_tau, c1:mean, c2:sd
+  //DATA_MATRIX(hyperpars); // r1:ln_kappa, r2:ln_tau, c1:mean, c2:sd
+  DATA_VECTOR(kap_tau_pr_mu);
+  DATA_VECTOR(kap_tau_pr_var);
+  //DATA_VECTOR(kap_tau_pr_theta);
+  DATA_INTEGER(prior_type);
 
   PARAMETER(b0); //intercept
-  PARAMETER(ln_kappa); //spatial correlation decay
-  PARAMETER(ln_tau); //spatial precision
+  //PARAMETER(ln_kappa); //spatial correlation decay
+  //PARAMETER(ln_tau); //spatial precision
+  //PARAMETER_VECTOR(ln_kap_tau);
+  //PARAMETER(theta);
+ // PARAMETER(ln_phi);
+ // PARAMETER(ln_spvar);
   PARAMETER_VECTOR(omega); //spatial random effect
 
   int i;
@@ -25,17 +33,33 @@ Type objective_function<Type>::operator() ()
   //int nv = omega.size()
 
   Type nll = 0.0;
+  //Type theta = -0.35;
+  vector<Type> resid(2);
 
-  if(hyperpars.sum() > 0){
+  if(prior_type == 1){
+    //nll -= dcauchy(theta, 0,2.5,true);
+    //matrix<Type>Sigma(2,2);
+    //Sigma(0,0) = kap_tau_pr_var(0);
+    //Sigma(1,1) = kap_tau_pr_var(1);
+    //Sigma(0,1) = theta * sqrt(kap_tau_pr_var(0)) * sqrt(kap_tau_pr_var(1));
+    //Sigma(1,0) = Sigma(0,1);
+    //resid = ln_kap_tau - kap_tau_pr_mu;
+    //nll += MVNORM(Sigma)(resid);
     nll -= dnorm(b0, Type(0), Type(5), true);
-    nll -= dnorm(ln_kappa, hyperpars(0,0), hyperpars(0,1), true);
-    nll -= dnorm(ln_tau, hyperpars(1,0), hyperpars(1,1), true);
+   // nll -= dnorm(ln_phi, kap_tau_pr_mu(0), sqrt(kap_tau_pr_var(0)));
+  //  nll -= dnorm(ln_spvar, kap_tau_pr_mu(1), sqrt(kap_tau_pr_var(1)));
+    //nll -= dnorm(ln_kappa, hyperpars(0,0), hyperpars(0,1), true);
+    //nll -= dnorm(ln_tau, hyperpars(1,0), hyperpars(1,1), true);
   }
 
-  Type kappa = exp(ln_kappa);
-  Type tau = exp(ln_tau);
-  Type marg_sp_sd = 1/(2*sqrt(M_PI)*kappa*tau);
-  Type Range = sqrt(8)/kappa;
+  //Type kappa = exp(ln_kap_tau(0));
+  //Type tau = exp(ln_kap_tau(1));
+  //Type marg_sp_sd = 1/(2*sqrt(M_PI)*kappa*tau);
+  //Type Range = sqrt(8)/kappa;
+  Type marg_sp_sd = sqrt(0.75);//sqrt(exp(ln_spvar));
+  Type Range = 50;//exp(ln_phi);
+  Type kappa = sqrt(8)/Range;
+  Type tau =  1/(2*sqrt(M_PI)*kappa*marg_sp_sd);
 
   //Spatial Likelihood
   //Define precision matrix
