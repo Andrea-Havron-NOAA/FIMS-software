@@ -69,7 +69,7 @@ mkSTANdat <- function(obs,
 }
 
 
-mkSpatialInits <- function(df){
+mkSpatialInits <- function(df,pr,method){
   Loc <- df[,1:2]
   y <- df[,3]
   
@@ -78,15 +78,54 @@ mkSpatialInits <- function(df){
   #calculate sparse distance matrix components
   spde <- inla.spde2.matern(mesh)
   
-  Dat <- list(y = y,
-              v_i = mesh$idx$loc-1,
-              M0 = spde$param.inla$M0,
-              M1 = spde$param.inla$M1,
-              M2 = spde$param.inla$M2)
-  Par.fn <- function(){
-    list(b0 = 0,ln_kappa = 0,ln_tau = 0,
-          omega = rep(0,mesh$n))
+  if(method == 'tmb'){
+    Dat <- list(y = y,
+                v_i = mesh$idx$loc-1,
+                M0 = spde$param.inla$M0,
+                M1 = spde$param.inla$M1,
+                M2 = spde$param.inla$M2,
+                kap_tau_pr_mu = c(0,0),
+                kap_tau_pr_var = c(0,0),
+                prior_type = 0)
+                #hyperpars = matrix(0,2,2))
+    if(pr == 1){
+      # Dat$hyperpars[1,] <- c(max(dist(Loc))*.2, 10)
+      # Dat$hyperpars[2,] <- c(0,2)
+      Dat$kap_tau_pr_mu <- c(log(max(dist(Loc))*.2), 0)
+      Dat$kap_tau_pr_var <- c(10, 2)
+      Dat$prior_type = 1
+    }
+    Par.fn <- function(){
+      # list(b0 = 0,ln_kappa = 0,ln_tau = 0,
+      #       omega = rep(0,mesh$n))
+      # list(b0 = 0,ln_kap_tau = c(0,0),
+      #      omega = rep(0,mesh$n))
+      list(b0 = 0,#ln_phi = 0, ln_spvar = 0,
+           omega = rep(0,mesh$n))
+    }
+  } 
+  if(method == 'stan'){
+    Dat <- list(N = length(y),
+                NV = mesh$n,
+                y = y,
+                vi = mesh$idx$loc,
+                M0 = as.matrix(spde$param.inla$M0),
+                M1 = as.matrix(spde$param.inla$M1),
+                M2 = as.matrix(spde$param.inla$M2),
+                #lnkapPr = c(0,0),
+                #lntauPr = c(0,0),
+                kap_tau_pr_mu = c(0,0),
+                kap_tau_pr_var = c(0,0),
+                prior_type = 0)
+    if(pr == 1){
+      #Dat$lnkapPr <- c(max(dist(Loc))*.2, 10)
+      #Dat$lntauPr <- c(0,2)
+      Dat$kap_tau_pr_mu <- c(log(max(dist(Loc))*.2), 0)
+      Dat$kap_tau_pr_var <- c(10, 2)
+      Dat$prior_type = 1
+    }
   }
+  
   init.list <- list(Dat = Dat, Par = Par.fn)
   return(init.list)
 }
