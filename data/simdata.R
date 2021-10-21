@@ -47,8 +47,9 @@ gendat <- function(seed = NULL, N=100,
     Omega <- sim.omega(theta[2], theta[3], d)
     y.sim <- rpois(nrow(grid.xy), exp(theta[1]+as.vector(Omega)))
     
-    samp.idx <- sample(1:nrow(grid.xy), N)
-    y <- data.frame(grid.xy[samp.idx,], z=y.sim[samp.idx])
+   # samp.idx <- sample(1:nrow(grid.xy), N)
+   # y <- data.frame(grid.xy[samp.idx,], z=y.sim[samp.idx])
+    y <- data.frame(grid.xy, z=y.sim)
   }
   
   
