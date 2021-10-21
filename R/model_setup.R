@@ -169,3 +169,40 @@ runSTAN <- function(dat,mod,prType,seed=123){
   
   return(results)
 }
+
+runADMB <- function(dat,mod){
+  wd <- getwd()
+  setwd('src/admb')
+  if(mod == 'gompertz'){
+    results <- list()
+  }
+  if(mod == 'logistic'){
+    Dat <- list(n=length(dat), y = dat)
+    Par <- list(ln_sig=-1,ln_tau=-1, ln_r = log(0.5), ln_K = log(80), u = rep(1,Dat$n) )
+    write_dat('logisticGrowth', Dat)
+    write_pin('logisticGrowth', Par)
+    compile_admb("logisticGrowth", re = TRUE, verbose = TRUE)
+    a <- Sys.time()
+    admb.mod <- run_admb("logisticGrowth", verbose = TRUE)
+    b <- Sys.time()
+    admb.rep <-  readLines('logisticGrowth.rep')
+    parm.rep <- function(f){
+      rep.out <- strsplit(f,"=")
+      parm.nm <- rep.out[[1]][1] 
+      parm.val <- rep.out[[1]][2] 
+      out <- list()
+      out[[parm.nm]] = as.numeric(parm.val)
+      return(out)
+    }
+    parm.out <- sapply(1:length(admb.rep), function(x) parm.rep(admb.rep[x]))
+    results <- list(par.est = unlist(parm.out),
+                    se.est = rep(NA,4),
+                    time = as.numeric(difftime(b,a, units = 'mins')),
+                    stan.time = as.numeric(difftime(b,a, units = 'mins')),
+                    meanESS =  NA,
+                    minESS =  NA)
+  }
+  setwd(wd)
+  return(results)
+  
+}
