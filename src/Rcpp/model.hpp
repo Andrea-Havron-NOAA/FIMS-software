@@ -37,13 +37,13 @@ public:
       eta[t] = u[t-1] + r * u[t-1] * (1-u[t-1]/K);
     }
   
-    return  eta; 
+    return eta; 
   }
   
   
   Type calculateNll(ParameterVector u, ParameterVector eta, Type sigma, Type tau, DataVector y){
   
-    Type nll = 0; 
+    Type nll = 0.0; 
     int n=y.size();
     
     for(int t=1; t<n; t++){
@@ -51,7 +51,7 @@ public:
     }
     
     for(int t=0; t<n; t++){
-      nll -= dlognorm(y[t],log(u[t]),tau,true);
+      nll -= dlognorm(y[t], log(u[t]), tau, true);
     }
   
     return nll;
