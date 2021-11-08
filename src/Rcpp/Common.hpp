@@ -27,6 +27,7 @@ const T log(const T& x){return std::log(x);}
 
 #ifdef STD_LIB
 
+#include <cmath>
 #include <vector>
 
 template<typename Type>
