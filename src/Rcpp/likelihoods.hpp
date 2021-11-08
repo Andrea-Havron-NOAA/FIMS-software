@@ -3,6 +3,7 @@
 //#include <TMB.hpp>
 //using namespace Rcpp;
 //using namespace std;
+#include <cmath>
 
 template<class Type>
 Type dlognorm(Type x, Type meanlog, Type sdlog, int give_log=0){
