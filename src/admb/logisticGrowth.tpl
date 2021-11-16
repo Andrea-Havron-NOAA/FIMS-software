@@ -3,16 +3,16 @@ DATA_SECTION
   init_vector y(1,n)
   
 PARAMETER_SECTION
-  init_bounded_number ln_r(-5,-.001)
+  init_bounded_number ln_r(-5,-0.001)
   init_bounded_number ln_K(3.5,7)
-  init_number ln_sig
-  init_number ln_tau
+  init_number ln_sig(2)
+  init_number ln_tau(2)
   sdreport_number r;
   sdreport_number K;
   sdreport_number sigma;
   sdreport_number tau;
 
-  random_effects_bounded_vector u(1,n,2,150,2);
+  random_effects_bounded_vector u(1,n,1,150);
 
   objective_function_value jnll
 
@@ -42,3 +42,9 @@ REPORT_SECTION
   report << "K =" << K << endl;
   report << "sigma =" << sigma << endl;
   report << "tau =" << tau << endl;
+  
+TOP_OF_MAIN_SECTION
+  arrmblsize = 40000000L;
+  gradient_structure::set_GRADSTACK_BUFFER_SIZE(3000000);
+  gradient_structure::set_CMPDIF_BUFFER_SIZE(200000);
+  gradient_structure::set_MAX_NVAR_OFFSET(460404);
