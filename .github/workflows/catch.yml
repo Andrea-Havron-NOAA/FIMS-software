@@ -7,7 +7,7 @@ defaults:
   run:
     working-directory: ./src/tests/catch
 
-name: GoogleTest
+name: Catch
 
 jobs:
   build:
