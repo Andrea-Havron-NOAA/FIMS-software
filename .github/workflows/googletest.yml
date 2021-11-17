@@ -19,10 +19,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Setup Ninja
-      - uses: seanmiddleditch/gha-setup-ninja@master # https://github.com/seanmiddleditch/gha-setup-ninja
-        
+    - uses: seanmiddleditch/gha-setup-ninja@master # https://github.com/seanmiddleditch/gha-setup-ninja
 
     - name: Configure
       run: |
