@@ -21,7 +21,7 @@ namespace {
     EXPECT_NEAR( dlognorm<double>(5.0, 10.0, 2.5, true) , -9.07679 , 0.0001 ); 
     EXPECT_NEAR( dlognorm<double>(5.0, 10.0, 2.5, false) , 0.0001142879 , 0.0001 ); 
     EXPECT_NE( dlognorm<double>(5.0, 10.0, 2.5, false) , 1.0 ); 
-    EXPECT_NEAR( dlognorm<double>(5.0, 10.0, 2.5, false) , 1.0 ); 
+    EXPECT_NEAR( dlognorm<double>(5.0, 10.0, 2.5, false) , 1.0, 0.0001 ); 
   
   }
   
