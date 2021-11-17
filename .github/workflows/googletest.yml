@@ -22,7 +22,6 @@ jobs:
 
     - name: Configure
       run: |
-        cd /home/runner/work/FIMS-software
         cmake -S . -B build 
         
     - name: Build
