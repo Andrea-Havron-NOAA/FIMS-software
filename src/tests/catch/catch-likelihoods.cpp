@@ -17,7 +17,6 @@ TEST_CASE( "dlognorm works", "[likelihoods]" ) {
     REQUIRE( (dlognorm<double>(5.0, 10.0, 2.5, true) - (-9.07679)) <= 0.0001 ); 
     REQUIRE( (dlognorm<double>(5.0, 10.0, 2.5, false) - (0.0001142879)) <= 0.0001 ); 
     REQUIRE( dlognorm<double>(5.0, 10.0, 2.5, false) != 1.0 ); 
-    REQUIRE( dlognorm<double>(5.0, 10.0, 2.5, false) == 1.0 ); 
     
   }
   
