@@ -1,4 +1,4 @@
-# Functional tests that are related to src/stateSpace.cpp
+# Functional tests that are related to src/tmb/stateSpace.cpp
 library(testthat)
 library(TMB)
 library(here)

@@ -1,0 +1,36 @@
+on:
+  push:
+    branches:
+      - tests
+      
+defaults:
+  run:
+    working-directory: ./src/tests/googletest
+
+name: GoogleTest
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: seanmiddleditch/gha-setup-ninja@master # https://github.com/seanmiddleditch/gha-setup-ninja
+
+    - name: Configure
+      run: |
+        cmake -S . -B build -G"Ninja"
+        
+    - name: Build
+      run: |
+        cd build 
+        cmake --build .
+        
+    - name: Test
+      run: |
+        cd build
+        ctest 
