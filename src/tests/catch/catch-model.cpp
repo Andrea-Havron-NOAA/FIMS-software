@@ -1,5 +1,5 @@
-#include "include/catch_amalgamated.hpp"
-#include "../src/Rcpp/model.hpp"
+#include <catch2/catch_test_macros.hpp>
+#include "../Rcpp/model.hpp"
 
 // # R code that generates true values for the test
 // u <- c(5000, 6000, 7000, 5500)
@@ -52,9 +52,19 @@ TEST_CASE( "Logistic growth model eta test", "[logistic-growth]" ) {
     eta_val = inst->calculateEta(u, r, K);
     true_eta = {};
     
-    REQUIRE((eta_val == true_eta));
+    REQUIRE( eta_val == true_eta );
   }
   
+  SECTION( "Different r test" ) {
+    
+    u = {5000, 6000, 7000, 5500};
+    r = 1.5;
+    eta_val = inst->calculateEta(u, r, K);
+    
+    true_eta = {0, 6250, 7200, 8050};
+    
+    REQUIRE( eta_val != true_eta );
+  }
 }
 
 TEST_CASE( "Logistic growth model nll test", "[logistic-growth]" ) {
@@ -71,7 +81,14 @@ TEST_CASE( "Logistic growth model nll test", "[logistic-growth]" ) {
   auto nll_val = inst->calculateNll(u, eta, sigma, tau, y);
   double true_nll = 58.13528;
   
-  REQUIRE((nll_val - true_nll) <= 1e-4);
+  REQUIRE( (nll_val - true_nll) <= 0.0001 );
+  
+  SECTION( "Different sigma test" ) {
+    
+    sigma = 0.3;
+    nll_val = inst->calculateNll(u, eta, sigma, tau, y);
+    REQUIRE( nll_val != true_nll );
+  }
   
 }
 
@@ -97,7 +114,16 @@ TEST_CASE( "Logistic growth model evaluate test", "[logistic-growth]" ) {
 
   double nll_val = inst->evaluate();
 
-  REQUIRE((nll_val - true_nll) <= 1e-4);
+  REQUIRE( (nll_val - true_nll) <= 0.0001 );
+  
+
+  SECTION( "Different ln_sig test" ) {
+    
+    inst->ln_sig = -5;
+    nll_val = inst->evaluate();
+    REQUIRE( nll_val != true_nll );
+    
+  }
   
 }
 
