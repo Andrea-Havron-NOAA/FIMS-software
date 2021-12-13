@@ -1,10 +1,20 @@
+.Rproj
 .Rproj.user
 .Rhistory
-.Rdata
+*.Rdata
 .httr-oauth
 .DS_Store
 src/stan/bugs
 data/tuna.R
-.o
-.dll
-.exe
+results/**
+data/**
+*.o
+*.dll
+*.exe
+*.csv
+src/admb/**
+!*.tpl
+#don't track for now
+src/tmb/MN.cpp
+src/tmb/ar1xar1.cpp
+src/tmb/spatial_deltaGamma.cpp
