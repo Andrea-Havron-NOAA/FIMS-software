@@ -8,6 +8,7 @@ src/stan/bugs
 data/tuna.R
 results/**
 data/**
+!data/simdata.R
 *.o
 *.dll
 *.exe
