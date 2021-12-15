@@ -53,7 +53,7 @@ end
         sigma ~ Exponential(0.1)
         tau ~ Exponential(0.1)
     end
-    u_init ~ Uniform(0.01,100)
+    u_init ~ Uniform(2,100)
     n = size(y)[1]
     umed = Vector(undef, n)
     u = Vector(undef, n)
