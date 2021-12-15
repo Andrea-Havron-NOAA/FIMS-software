@@ -10,7 +10,7 @@ wd <- getwd()
 setwd('src/admb')
 
 Mod <- 'logistic'
-n <- 100
+n <- 32
 
 simdata <- gendat(seed=123,
                   N=n,
@@ -21,12 +21,14 @@ simdata <- gendat(seed=123,
 
  
 Dat <- list(n=n, y = simdata)
-Par <- list(ln_sig=-1,ln_tau=-1, ln_r = log(0.5), ln_K = log(80), u = rep(1,n) )
+Par <- list(ln_r = log(0.5), ln_K = log(80), ln_sig=-1,ln_tau=-1,  u = rep(1,n) )
 write_dat('logisticGrowth', Dat)
 write_pin('logisticGrowth', Par)
-compile_admb("logisticGrowth", re = TRUE, verbose = TRUE)
-admb.mod <- run_admb("logisticGrowth", verbose = TRUE)
+#compile_admb("logisticGrowth", re = TRUE, verbose = TRUE)
+file.remove('logisticGrowth.rep'); rm(admb.rep)
+admb.mod <- run_admb("logisticGrowth", verbose = TRUE)#, extra.args = "-noinit")
 admb.rep <-  readLines('logisticGrowth.rep')
+admb.rep
 parm.rep <- function(f){
   rep.out <- strsplit(f,"=")
   parm.nm <- rep.out[[1]][1] 
