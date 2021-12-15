@@ -111,14 +111,16 @@ mkSpatialInits <- function(df,pr,method){
                 M2 = as.matrix(spde$param.inla$M2),
                 #lnkapPr = c(0,0),
                 #lntauPr = c(0,0),
-                kap_tau_pr_mu = c(0,0),
-                kap_tau_pr_var = c(0,0),
-                prior_type = 0)
+                # kap_tau_pr_mu = c(0,0),
+                # kap_tau_pr_var = c(0,0),
+                prior_type = 0,
+                kappa = sqrt(8)/50,
+                tau = 1/(sqrt(4*pi*0.75)*sqrt(8)/50))
     if(pr == 1){
       #Dat$lnkapPr <- c(max(dist(Loc))*.2, 10)
       #Dat$lntauPr <- c(0,2)
-      Dat$kap_tau_pr_mu <- c(log(max(dist(Loc))*.2), 0)
-      Dat$kap_tau_pr_var <- c(10, 2)
+      #Dat$kap_tau_pr_mu <- c(log(max(dist(Loc))*.2), 0)
+      #Dat$kap_tau_pr_var <- c(10, 2)
       Dat$prior_type = 1
     }
   }
