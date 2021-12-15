@@ -9,6 +9,7 @@ library(TMB)
 library(tmbstan)
 library(cmdstanr)
 library(INLA)
+library(R2admb)
 
 source('data/simdata.R')
 source('R/utils.R')
@@ -22,13 +23,16 @@ simdata <- gendat(seed=5,
                   u1 = NA,
                   var = NA,
                   mod.name = 'spatial')
-
+png(filename = 'results/plots/spatialsim.png', height = 1200, width = 1500, res = 200)
+ggplot(mapping = aes(x=simdata[,1], y=simdata[,2],fill=simdata[,3])) + 
+  geom_raster() + xlab('') + ylab('') + theme_classic()
+dev.off()
 #Implement sampling for n = 2^seq(5,11,1)
-#n.seq <- seq(5,11,1)
-n.seq = 6
+n.seq <- seq(5,11,1)
+
 for(i in 1:length(n.seq)){
   n <- 2^n.seq[i]
-
+  
   set.seed(i)
   samp.idx <- sample(1:nrow(simdata), n)
   sampdata <- simdata[samp.idx,]
@@ -45,17 +49,58 @@ for(i in 1:length(n.seq)){
     list(b0 = spatial.results$inits[1], 
          omega = spatial.results$inits[2:length(spatial.results$inits)])
   }
+  inits <- spatial.inits()
+  save(inits,  file = paste0('data/spatial/spatialInits', '_n', n, '.RData'))
   spatial.results$stan <- runSTAN(simdata, Mod,1)
   
   save(spatial.results, file = paste0('results/spatial/spatial', '_n', n, '.RData'))
-  #Compare rstan, tmbstan, tmb
-  cbind(true=c(0.2,100,0.01,0.001),round(sapply(logistic.results, function(x) x$par.est),3))
-  sapply(logistic.results, function(x) x$se.est)
-  sapply(logistic.results, function(x) x$time)
-  sapply(logistic.results, function(x) x$meanESS)
-  sapply(logistic.results, function(x) x$minESS)
-  
+
 }
+#run admb spatial
+wd <- getwd()
+setwd('src/admb')
+results <- list()
+parm.rep <- function(f){
+  rep.out <- strsplit(f,"=")
+  parm.nm <- rep.out[[1]][1] 
+  parm.val <- as.numeric(strsplit(rep.out[[1]][2], " ")[[1]]) 
+  if(is.na(parm.val[1])) parm.val <- parm.val[-1]
+  out <- list()
+  out[[parm.nm]] = parm.val
+  return(out)
+}
+for(i in 1:length(n.seq)){
+  n <- 2^n.seq[i]
+  Mod <- 'spatial'
+  set.seed(i)
+  samp.idx <- sample(1:nrow(simdata), n)
+  sampdata <- simdata[samp.idx,]
+  mesh <- INLA::inla.mesh.create(sampdata[,1:2])
+  spde <- INLA::inla.spde2.matern(mesh)
+  m <- mesh$n
+  
+  Dat <- list(n=n, m = m,  y = sampdata$z,
+              v_i = mesh$idx$loc, M0 = as.matrix(spde$param.inla$M0),
+              M1 = as.matrix(spde$param.inla$M1), 
+              M2 = as.matrix(spde$param.inla$M2),
+              log_kappa = log(sqrt(8)/50), 
+              log_tau = log( 1/( sqrt(4*pi)*sqrt(8)/50*sqrt(.75) )))
+  Par <- list(b = 1,  u = rep(0,m) )
+  write_dat('spatial_gmrf', Dat)
+  write_pin('spatial_gmrf', Par)
+  file.remove('spatial_gmrf.rep')
+  a <- Sys.time()
+  admb.mod <- run_admb("spatial_gmrf", verbose = TRUE)
+  b <- Sys.time()
+  admb.rep <-  readLines('spatial_gmrf.rep')
+  parm.est <- sapply(1:length(admb.rep), function(x) parm.rep(admb.rep[x]))
+  results <- list(parms = parm.est, time = difftime(b,a, units = 'min'))
+  save(results, file = paste0('../../results/spatial/admb_re_n', n, '.RData'))
+}
+ setwd(wd)
+  
+
+
 library(magrittr)
 library(tidyr)
 plot.res <- c()
