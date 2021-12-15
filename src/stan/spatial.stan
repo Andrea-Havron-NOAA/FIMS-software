@@ -1,4 +1,4 @@
-// Logistic growth model 
+//spatial model 
 // Andrea Havron, 2021
 
 data{
@@ -9,8 +9,8 @@ data{
   matrix[NV,NV] M0;
   matrix[NV,NV] M1;
   matrix[NV,NV] M2;
-  vector[2] kap_tau_pr_mu;
-  vector[2] kap_tau_pr_var;
+//  vector[2] kap_tau_pr_mu;
+//  vector[2] kap_tau_pr_var;
   int prior_type;
   real kappa;
   real tau;
