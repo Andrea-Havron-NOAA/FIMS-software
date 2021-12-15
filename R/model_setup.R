@@ -55,7 +55,7 @@ runTMB <- function(dat,mod,seed=123,prType=0){
   if(mod == 'spatial'){
     if(prType==1){
       obj$env$data$prior_type <- 1
-      new.dat <-  mkSpatialInits(dat,1, 'tmb')
+      new.dat <- mkSpatialInits(dat,1, 'tmb')
       obj$env$data$kap_tau_pr_mu <- new.dat$Dat$kap_tau_pr_mu
       obj$env$data$kap_tau_pr_var <- new.dat$Dat$kap_tau_pr_var
     }
@@ -169,38 +169,61 @@ runSTAN <- function(dat,mod,prType,seed=123){
   
   return(results)
 }
+setupADMB <- function(modName, doRE){ 
+  wd <- getwd()
+  setwd('src/admb')
+  compile_admb(modName, re = doRE, verbose = TRUE)
+  setwd(wd)
 
+}
 runADMB <- function(dat,mod){
+  parm.rep <- function(f){
+    rep.out <- strsplit(f,"=")
+    parm.nm <- rep.out[[1]][1] 
+    parm.val <- as.numeric(strsplit(rep.out[[1]][2], " ")[[1]]) 
+    if(is.na(parm.val[1])) parm.val <- parm.val[-1]
+    out <- list()
+    out[[parm.nm]] = parm.val
+    return(out)
+  }
   wd <- getwd()
   setwd('src/admb')
   if(mod == 'gompertz'){
     results <- list()
   }
   if(mod == 'logistic'){
-    Dat <- list(n=length(dat), y = dat)
-    Par <- list(ln_sig=-1,ln_tau=-1, ln_r = log(0.5), ln_K = log(80), u = rep(1,Dat$n) )
-    write_dat('logisticGrowth', Dat)
-    write_pin('logisticGrowth', Par)
-    compile_admb("logisticGrowth", re = TRUE, verbose = TRUE)
-    a <- Sys.time()
-    admb.mod <- run_admb("logisticGrowth", verbose = TRUE)
-    b <- Sys.time()
-    admb.rep <-  readLines('logisticGrowth.rep')
-    parm.rep <- function(f){
-      rep.out <- strsplit(f,"=")
-      parm.nm <- rep.out[[1]][1] 
-      parm.val <- rep.out[[1]][2] 
-      out <- list()
-      out[[parm.nm]] = as.numeric(parm.val)
-      return(out)
+    models <- c('logisticGrowth', 'logisticGrowth_nonsep')
+    results <- list()
+    for(m in 1:length(models)){
+      mod.name <- models[m]
+      Dat <- list(n=length(dat), y = dat)
+      Par <- list(ln_r = log(0.5), ln_K = log(80), ln_sig=-1,ln_tau=-1,  u = rep(1,n) )
+      write_dat(mod.name, Dat)
+      write_pin(mod.name, Par)
+      a <- Sys.time()
+      admb.mod <- run_admb(mod.name, verbose = TRUE, extra.args = '-noinit')
+      b <- Sys.time()
+      rep.name <- paste0(mod.name, '.rep')
+      if(rep.name %in% list.files()){
+        admb.rep <-  readLines(rep.name)
+        parm.out <- sapply(1:length(admb.rep), function(x) parm.rep(admb.rep[x]))
+        results[[mod.name]] <- list(par.est = unlist(parm.out),
+                        se.est = rep(NA,4),
+                        time = as.numeric(difftime(b,a, units = 'mins')),
+                        stan.time = as.numeric(difftime(b,a, units = 'mins')),
+                        meanESS =  NA,
+                        minESS =  NA)
+        file.remove(rep.name)
+      } else {
+        results[[mod.name]] <- list(par.est = rep(NA,4),
+                        se.est = rep(NA,4),
+                        time = as.numeric(difftime(b,a, units = 'mins')),
+                        stan.time = as.numeric(difftime(b,a, units = 'mins')),
+                        meanESS =  NA,
+                        minESS =  NA)
+      }
     }
-    parm.out <- sapply(1:length(admb.rep), function(x) parm.rep(admb.rep[x]))
-    results <- list(par.est = unlist(parm.out),
-                    se.est = rep(NA,4),
-                    time = as.numeric(difftime(b,a, units = 'mins')),
-                    stan.time = as.numeric(difftime(b,a, units = 'mins')),
-                    meanESS =  NA,
-                    minESS =  NA)
+   
   }
   setwd(wd)
   return(results)
