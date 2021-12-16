@@ -19,7 +19,7 @@ Type objective_function<Type>::operator()()
 {
   DATA_VECTOR(y);
   DATA_INTEGER(mod);
-  DATA_VECTOR(hyperpars); //theta1 mu, theta1 sd, theta2 mu, theta2 sd, sigma, tau
+  DATA_VECTOR(hyperpars);//r mu, r sd, K mu, K sd, sigma, tau
 
   PARAMETER_VECTOR(theta);
   PARAMETER(ln_sig);  Type sigma = exp(ln_sig);
@@ -46,10 +46,10 @@ Type objective_function<Type>::operator()()
 
 
     if(hyperpars.size() > 1){
-      nll -= dlnrom(r, hyperpars_theta(0,0), hyperpars_theta(0,1), true);
-      nll -= dlnrom(K, hyperpars_theta(1,0), hyperpars_theta(1,1), true);
-      nll -= dexp(sigma, hyperpars_sd(0), true);
-      nll -= dexp(tau, hyperpars_sd(1), true);
+      nll -= dlnorm(r, hyperpars(0), hyperpars(1), true);
+      nll -= dlnorm(K, hyperpars(2), hyperpars(3), true);
+      nll -= dexp(sigma, hyperpars(4), true);
+      nll -= dexp(tau, hyperpars(5), true);
     }
 
     for(t=1; t<n; t++){
