@@ -48,8 +48,8 @@ Type objective_function<Type>::operator()()
     if(hyperpars.size() > 1){
       nll -= dlnrom(r, hyperpars_theta(0,0), hyperpars_theta(0,1), true);
       nll -= dlnrom(K, hyperpars_theta(1,0), hyperpars_theta(1,1), true);
-      nll -= dexp(sigma, hyperpars_sd(0));
-      nll -= dexp(tau, hyperpars_sd(1));
+      nll -= dexp(sigma, hyperpars_sd(0), true);
+      nll -= dexp(tau, hyperpars_sd(1), true);
     }
 
     for(t=1; t<n; t++){
