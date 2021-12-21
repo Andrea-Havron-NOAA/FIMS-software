@@ -1,8 +1,10 @@
 library(TMB)
-compile("src/Rcpp/logisticGrowth.cpp", flags= "-DTMB_MODEL -w")
+source('data/simdata.R')
+#compile("src/Rcpp/logisticGrowth.cpp", flags= "-DTMB_MODEL -w")
+compile("src/Rcpp/logisticGrowth.cpp")
 dyn.load(dynlib("src/Rcpp/logisticGrowth"))
 y <- gendat(seed=123,
-                  N=2^12,
+                  N=100,
                   theta = c(0.2,100),
                   u1 = 4,
                   var = list(proc=0.01,obs=0.001),
@@ -16,8 +18,11 @@ newtonOption(obj, smartsearch=FALSE)
 obj$fn()
 obj$gr()
 system.time(opt <- nlminb(obj$par, obj$fn, obj$gr))
-rep <- sdreport(obj)
+sdr <- sdreport(obj)
 b <- Sys.time()
-time.diff(b,a)
-exp(summary(rep, 'fixed')[,1])
+difftime(b,a)
+summary(sdr, 'fixed')[,1]
+summary(sdr, 'random')[,1]
+summary(sdr, 'report')[,1]
 
+dyn.unload(dynlib("src/Rcpp/logisticGrowth"))
