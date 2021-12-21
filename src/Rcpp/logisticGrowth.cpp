@@ -16,18 +16,23 @@ Type objective_function<Type>::operator()(){
   PARAMETER_VECTOR(u);
   
   inst->y = y;
-  inst->theta = theta;
+  //inst->theta = theta;
   inst->ln_sig = ln_sig;
   inst->ln_tau = ln_tau;
   inst->u = u;
   
-  return inst -> evaluate();
+  Type r;
+  Type K;
+  inst->r = exp(theta[0]);
+  inst->K = exp(theta[1]);
   
-  //Reporting
-  //REPORT(r);
-  //REPORT(K);
-  //ADREPORT(r);
-  //ADREPORT(K);
-  //REPORT(u);
+  REPORT(r);
+  REPORT(K);
+  ADREPORT(r);
+  ADREPORT(K);
+  REPORT(u);
+  
+  return inst -> evaluate();
+
 }
 
