@@ -23,6 +23,11 @@ b <- Sys.time()
 difftime(b,a)
 summary(sdr, 'fixed')[,1]
 summary(sdr, 'random')[,1]
-summary(sdr, 'report')[,1]
+summary(sdr, 'report')[,1] #not being updated
+
+report <- obj$report()
+report$u
+report$K
+report$r
 
 dyn.unload(dynlib("src/Rcpp/logisticGrowth"))
