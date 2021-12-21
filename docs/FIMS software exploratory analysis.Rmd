@@ -23,27 +23,15 @@ This project aims to produce a comprehensive review of available statistical com
 
 # Models
 
-The state-space comparison looks at two models: a simple Gompertz state-space model and a logistic growth model.
-
-Gompertz:
+The state-space comparison looks at a logistic growth model:
 
 $$\begin{align}
-\eta_{t} &= \theta_{1} + \theta_{2}u_{t-1} \\
-u_{t} &\sim N(\eta_{t},\sigma^{2}_{proc}) \\
-y_{t} &\sim N(u_{t}, \sigma^{2}_{obs})
+\eta_{t} &= u_{t-1} + ru_{t-1}(1-u_{t-1}/K) \\
+u_{t} &\sim LN(log(\eta_{t}),\sigma_{proc}) \\
+y_{t} &\sim LN(log(u_{t}), \sigma_{obs})
 \end{align}$$,
 
-where $\sigma^{2}_{proc}$ represents the process variance and $\sigma^{2}_{obs}$ represents the observation variance.
-
-Logistic growth:
-
-$$\begin{align}
-\eta_{t} &= u_{t-1} + \theta_{1}u_{t-1}(1-u_{t-1}/\theta_{2}) \\
-u_{t} &\sim LN(log(\eta_{t}),\sigma^{2}_{proc}) \\
-y_{t} &\sim LN(log(u_{t}), \sigma^{2}_{obs})
-\end{align}$$,
-
-where $\theta_{1}$ represents the growth rate and $\theta_{2}$ represents the density-dependent carrying capacity.
+where $r$ represents the growth rate and $K$ represents the density-dependent carrying capacity.
 
 # Software Platforms
 ## TMB/R
