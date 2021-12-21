@@ -59,7 +59,26 @@ for(i in 1:length(n.seq)){
   save(logistic.results, file = paste0('results/logistic/logistic', '_n', n, '.RData'))
   
   
-  #admb
+ 
+}
+
+
+## ADMB
+## Issues with admb so moving runs into its own loop
+
+for(i in 1:length(n.seq)){
+  n <- 2^n.seq[i]
+  
+  #logistic model
+  Mod <- 'logistic'
+
+  simdata <- gendat(seed=i,
+                    N=n,
+                    theta = c(0.2,100),
+                    u1 = 4,
+                    var = list(proc=0.01,obs=0.001),
+                    mod.name = Mod)
+  load(paste0('results/logistic/logistic', '_n', n, '.RData'))
   logistic.results$admb <- runADMB(simdata, Mod)
   save(logistic.results, file = paste0('results/logistic/logistic', '_n', n, '.RData'))
 }
