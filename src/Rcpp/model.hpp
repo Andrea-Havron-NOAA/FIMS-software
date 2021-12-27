@@ -17,7 +17,9 @@ public:
   DataVector  y;
   // /* Parameter section */
   ParameterVector u;
-  ParameterVector theta;
+  Type r;
+  Type K;
+  //ParameterVector theta;
   Type ln_sig;
   Type ln_tau;
   static logisticGrowth<Type>* instance;
@@ -58,8 +60,8 @@ public:
   }
   
   Type evaluate(){
-    Type r = exp(theta[0]);
-    Type K = exp(theta[1]);
+    //Type r = exp(theta[0]);
+    //Type K = exp(theta[1]);
     Type sigma = exp(ln_sig);
     Type tau = exp(ln_tau);
     

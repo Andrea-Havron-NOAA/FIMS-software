@@ -1,7 +1,7 @@
 library(TMB)
 source('data/simdata.R')
 #compile("src/Rcpp/logisticGrowth.cpp", flags= "-DTMB_MODEL -w")
-compile("src/Rcpp/logisticGrowth.cpp")
+TMB::compile("src/Rcpp/logisticGrowth.cpp")
 dyn.load(dynlib("src/Rcpp/logisticGrowth"))
 y <- gendat(seed=123,
                   N=100,
@@ -24,5 +24,10 @@ difftime(b,a)
 summary(sdr, 'fixed')[,1]
 summary(sdr, 'random')[,1]
 summary(sdr, 'report')[,1]
+
+report <- obj$report()
+report$u
+report$K
+report$r
 
 dyn.unload(dynlib("src/Rcpp/logisticGrowth"))
