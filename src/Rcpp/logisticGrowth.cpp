@@ -2,6 +2,7 @@
 //#include "functions.hpp"
 //#include "distributions.hpp"
 #include "model.hpp"
+#include "DerivedQuantities.hpp"
 
 
 template<class Type>
@@ -31,7 +32,16 @@ Type objective_function<Type>::operator()(){
   ADREPORT(K);
   REPORT(u);
   
-  return inst -> evaluate();
+  Type nll = inst -> evaluate();
+  
+  Type sigma = exp(ln_sig);
+  Type tau = exp(ln_tau);
+  
+  Type H = MSY(r,K);
+  REPORT(H);
+  ADREPORT(H);
+  
+  return nll;
 
 }
 
