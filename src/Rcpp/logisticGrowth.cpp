@@ -16,13 +16,12 @@ Type objective_function<Type>::operator()(){
   PARAMETER_VECTOR(u);
   
   inst->y = y;
-  //inst->theta = theta;
   inst->ln_sig = ln_sig;
   inst->ln_tau = ln_tau;
   inst->u = u;
   
-  Type r;
-  Type K;
+  Type r = exp(theta[0]);
+  Type K = exp(theta[1]);
   inst->r = exp(theta[0]);
   inst->K = exp(theta[1]);
   
