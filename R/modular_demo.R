@@ -21,9 +21,9 @@ system.time(opt <- nlminb(obj$par, obj$fn, obj$gr))
 sdr <- sdreport(obj)
 b <- Sys.time()
 difftime(b,a)
-summary(sdr, 'fixed')[,1]
+summary(sdr, 'fixed')
 summary(sdr, 'random')[,1]
-summary(sdr, 'report')[,1]
+summary(sdr, 'report')
 
 report <- obj$report()
 report$u
@@ -31,3 +31,4 @@ report$K
 report$r
 
 dyn.unload(dynlib("src/Rcpp/logisticGrowth"))
+
