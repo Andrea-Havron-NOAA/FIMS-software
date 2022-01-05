@@ -49,15 +49,13 @@ public:
     
     for(int t=1; t<n; t++){
       nll -= dlognorm(u[t], log(eta[t]), sigma, true);
-      //u[t] =  sim_rlnorm(log(eta[t]), sigma, this);
     }
     
     for(int t=0; t<n; t++){
       nll -= dlognorm(y[t], log(u[t]), tau, true);
-      //y[t] =  sim_rlnorm(log(u[t]), tau, this);
     }
   
-    return nll;
+    return nll;  
   }
   
   Type evaluate(){

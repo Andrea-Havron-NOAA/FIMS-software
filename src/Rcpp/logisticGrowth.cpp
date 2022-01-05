@@ -26,16 +26,23 @@ Type objective_function<Type>::operator()(){
   inst->r = r;
   inst->K = K;
   
-  Type nll = inst -> evaluate();
+  Type sigma = exp(ln_sig);
+  Type tau = exp(ln_tau);
   
+  Type nll = inst -> evaluate();
+  SIMULATE{
+    vector<Type> eta = inst -> calculateEta(inst ->u, inst ->r, inst ->K);
+    u = exp(rnorm(log(eta), sigma));
+    y = exp(rnorm(log(u), tau));
+    REPORT(u);
+    REPORT(y);
+  }
   REPORT(r);
   REPORT(K);
   ADREPORT(r);
   ADREPORT(K);
   REPORT(u);
-  
-  Type sigma = exp(ln_sig);
-  Type tau = exp(ln_tau);
+
   
   REPORT(sigma);
   REPORT(tau);
