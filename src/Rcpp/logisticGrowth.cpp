@@ -23,8 +23,10 @@ Type objective_function<Type>::operator()(){
   
   Type r = exp(theta[0]);
   Type K = exp(theta[1]);
-  inst->r = exp(theta[0]);
-  inst->K = exp(theta[1]);
+  inst->r = r;
+  inst->K = K;
+  
+  Type nll = inst -> evaluate();
   
   REPORT(r);
   REPORT(K);
@@ -32,10 +34,14 @@ Type objective_function<Type>::operator()(){
   ADREPORT(K);
   REPORT(u);
   
-  Type nll = inst -> evaluate();
-  
   Type sigma = exp(ln_sig);
   Type tau = exp(ln_tau);
+  
+  REPORT(sigma);
+  REPORT(tau);
+  ADREPORT(sigma);
+  ADREPORT(tau);
+
   
   Type H = MSY(r,K);
   REPORT(H);
