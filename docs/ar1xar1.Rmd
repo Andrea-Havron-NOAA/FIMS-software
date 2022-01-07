@@ -2,7 +2,9 @@
 title: "Modular example of TMB functions"
 author: "Andrea Havron"
 date: "1/7/2022"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
