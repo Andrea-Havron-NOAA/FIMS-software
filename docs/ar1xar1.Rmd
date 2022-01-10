@@ -66,7 +66,7 @@ Data can be simulated from the model from the [R interface](https://github.com/A
 sim <- obj$simulate()
 plot(y, sim$y)
 ```
-[See plot](https://github.com/Andrea-Havron-NOAA/FIMS-software/tree/master/src/Rcpp/ar1xar1/simy.png)
+![](simy.png)
 
 #### 2. SEPARABLE
 Functions within density.hpp, including AR1 and SEPARABLE, are accessible to the ar1xar1 class after adding the following to [Common.hpp](https://github.com/Andrea-Havron-NOAA/FIMS-software/blob/334ccc9e1b6ee99e80260e7555a721b9d8e7cfe1/src/Rcpp/ar1xar1/Common.hpp#L10):
@@ -117,7 +117,10 @@ for(int i=0; i < y.size(); i++){
 
 The ar1xar1.R script provides an example of model validation using the original [correctly specified model](https://github.com/Andrea-Havron-NOAA/FIMS-software/blob/334ccc9e1b6ee99e80260e7555a721b9d8e7cfe1/src/Rcpp/ar1xar1/ar1xar1.R#L62)
 
-[See plot](https://github.com/Andrea-Havron-NOAA/FIMS-software/tree/master/src/Rcpp/ar1xar1/correct.png)
+![](correct.png)
+
 
 And using a [mis-specified model](https://github.com/Andrea-Havron-NOAA/FIMS-software/blob/334ccc9e1b6ee99e80260e7555a721b9d8e7cfe1/src/Rcpp/ar1xar1/ar1xar1.R#L70):
-[See plot](https://github.com/Andrea-Havron-NOAA/FIMS-software/tree/master/src/Rcpp/ar1xar1/misspecified.png)
+
+
+![](misspecified.png)
