@@ -103,5 +103,10 @@ The FIMS software platform project is organized as follows:
 </tbody>
 </table>
 
-[Example](https://andrea-havron-noaa.github.io/FIMS-software/docs/ar1xar1.html)
-incorporating TMB functions in a modular C++ framework
+## Modular TMB Examples
+
+Incorporating TMB functions in a modular C++ framework
+
+[logisticGrowth](https://andrea-havron-noaa.github.io/FIMS-software/docs/logisticGrowth.html)
+
+[ar1xar1](https://andrea-havron-noaa.github.io/FIMS-software/docs/ar1xar1.html)
