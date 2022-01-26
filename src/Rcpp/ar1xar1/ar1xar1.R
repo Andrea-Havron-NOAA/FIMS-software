@@ -1,7 +1,7 @@
 ## modified code from: https://github.com/kaskr/adcomp/blob/master/TMB/inst/examples/ar1xar1.R
 
 #compile model
-TMB::compile("src/Rcpp/ar1xar1/ar1xar1.cpp")
+TMB::compile("src/Rcpp/ar1xar1/ar1xar1.cpp", flags="-w")
 
 set.seed(123)
 n <- 20 ## Size of problem = n*n
@@ -68,7 +68,7 @@ qqnorm(osa.gen$residual);abline(0,1);ks.test(osa.gen$residual, 'pnorm')
 qqnorm(osa.cdf$residual);abline(0,1);ks.test(osa.cdf$residual, 'pnorm')
 
 #Fit mis-specified model
-#fix phi2 = 0 using map
+#fix phi2 = -0.9 using map
 obj2 <- MakeADFun(data=list(y=y),
                  parameters=list(
                    eta=matrix(0,n,n),
