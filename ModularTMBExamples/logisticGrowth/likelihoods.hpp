@@ -13,8 +13,10 @@ Type dlognorm(Type x, Type meanlog, Type sdlog, int give_log=0){
   return logres;
 }
 
+/* Not Implemented
 #undef TMB_OBJECTIVE_PTR
 #define TMB_OBJECTIVE_PTR of
+
 
 template<class Type>
 CppAD::vector<Type> sim_rlnorm(Type meanlog, Type sdlog, objective_function<Type>* of){
@@ -27,4 +29,4 @@ CppAD::vector<Type> sim_rlnorm(Type meanlog, Type sdlog, objective_function<Type
 }
 #undef  TMB_OBJECTIVE_PTR
 #define TMB_OBJECTIVE_PTR this
-
+*/
