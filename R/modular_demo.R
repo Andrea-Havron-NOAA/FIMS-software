@@ -30,5 +30,9 @@ report$u
 report$K
 report$r
 
+#simulate data
+set.seed(123)
+modular.sim <- obj$simulate()
+
 dyn.unload(dynlib("src/Rcpp/logisticGrowth"))
 
