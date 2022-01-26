@@ -8,6 +8,8 @@ template<class Type>
 class ar1xar1{
   
   using DataVector = typename model_traits<Type>::data_vector;
+  using DataIndicator = typename model_traits<Type>::data_indicator;
+  using ParameterArray = typename model_traits<Type>::array;
   //using ParameterVector = typename model_traits<Type>::parameter_vector;
   //using IndicatorVector = typename model_traits<Type>::indicator_vector;
   //using ParameterArray = typename model_traits<Type>::parameter_array;
@@ -15,12 +17,10 @@ class ar1xar1{
 public:
   // /* Data section */
   DataVector  y;
-  data_indicator<tmbutils::vector<Type> , Type> keep;
+  DataIndicator keep;
   //data_indicator(keep,y);
   // /* Parameter section */
-  tmbutils::array<Type> eta;
-  //ParameterArray eta;
-  //ParameterVector eta;
+  ParameterArray eta;
   Type phi1;
   Type phi2;
   static ar1xar1<Type>* instance;
