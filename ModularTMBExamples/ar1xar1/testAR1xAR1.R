@@ -1,7 +1,7 @@
 ## modified code from: https://github.com/kaskr/adcomp/blob/master/TMB/inst/examples/ar1xar1.R
 
 #compile model
-TMB::compile("src/Rcpp/ar1xar1/ar1xar1.cpp", flags="-w")
+TMB::compile("src/Rcpp/ar1xar1/ar1xar1.cpp")
 
 set.seed(123)
 n <- 20 ## Size of problem = n*n
@@ -46,16 +46,9 @@ obj <- MakeADFun(data=list(y=y),
 #runSymbolicAnalysis(obj)
 opt <- nlminb(obj$par, obj$fn, obj$gr)
 opt$par
-report <- obj$report()
 sdr <- sdreport(obj)
 summary(sdr, 'report')
 phi1;phi2
-
-sim <- obj$simulate()
-#Confirm data and simulations are different
-plot(y, sim$y)
-plot(eta, sim$eta)
-plot(report$eta, sim$eta)
 
 #test TMB validation
 #oneStepGeneric slower than cdf
@@ -68,27 +61,20 @@ qqnorm(osa.gen$residual);abline(0,1);ks.test(osa.gen$residual, 'pnorm')
 qqnorm(osa.cdf$residual);abline(0,1);ks.test(osa.cdf$residual, 'pnorm')
 
 #Fit mis-specified model
-#fix phi2 = -0.9 using map
+#fix phi2 = 0 using map
 obj2 <- MakeADFun(data=list(y=y),
                  parameters=list(
                    eta=matrix(0,n,n),
                    transf_phi1=invf(0.5),
-                   transf_phi2=invf(-.9)),
+                   transf_phi2=invf(0)),
                  random=c("eta"),
                  map = list(transf_phi2 = factor(NA)),
                  DLL="ar1xar1")
 opt2 <- nlminb(obj2$par, obj2$fn, obj2$gr)
 opt2$par
-report2 <- obj2$report()
 sdr2 <- sdreport(obj2)
 summary(sdr2, 'report')
 phi1;phi2
-
-sim2 <- obj2$simulate()
-#Confirm data and simulations are different
-plot(y, sim2$y)
-plot(eta, sim2$eta)
-plot(report$eta, sim2$eta)
 
 #validation now fails visual and ks.test
 osa.gen2 <- oneStepPredict(obj2, 'y', data.term.indicator = 'keep', 
@@ -96,7 +82,7 @@ osa.gen2 <- oneStepPredict(obj2, 'y', data.term.indicator = 'keep',
                           range = c(0,Inf))
 osa.cdf2 <- oneStepPredict(obj2, 'y', data.term.indicator = 'keep', 
                           method = 'cdf', discrete = TRUE)
-qqnorm(osa.gen2$residual);abline(0,1);ks.test(osa.gen2$residual, 'pnorm')
-qqnorm(osa.cdf2$residual);abline(0,1);ks.test(osa.cdf2$residual, 'pnorm')
+qqnorm(osa.gen2$residual);abline(0,1);ks.test(osa.gen$residual, 'pnorm')
+qqnorm(osa.cdf2$residual);abline(0,1);ks.test(osa.cdf$residual, 'pnorm')
 
 dyn.unload(dynlib("src/Rcpp/ar1xar1/ar1xar1"))
