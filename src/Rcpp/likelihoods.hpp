@@ -13,18 +13,18 @@ Type dlognorm(Type x, Type meanlog, Type sdlog, int give_log=0){
   return logres;
 }
 
-#undef TMB_OBJECTIVE_PTR
-#define TMB_OBJECTIVE_PTR of
-
-template<class Type>
-CppAD::vector<Type> sim_rlnorm(Type meanlog, Type sdlog, objective_function<Type>* of){
-  Type y;
-  SIMULATE {
-    y = exp(rnorm(meanlog, sdlog));  // Simulate response
-  }
-
-  return y;
-}
-#undef  TMB_OBJECTIVE_PTR
-#define TMB_OBJECTIVE_PTR this
+// #undef TMB_OBJECTIVE_PTR
+// #define TMB_OBJECTIVE_PTR of
+// 
+// template<class Type>
+// CppAD::vector<Type> sim_rlnorm(Type meanlog, Type sdlog, objective_function<Type>* of){
+//   Type y;
+//   SIMULATE {
+//     y = exp(rnorm(meanlog, sdlog));  // Simulate response
+//   }
+// 
+//   return y;
+// }
+// #undef  TMB_OBJECTIVE_PTR
+// #define TMB_OBJECTIVE_PTR this
 
