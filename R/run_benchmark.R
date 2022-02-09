@@ -82,3 +82,4 @@ for(i in 1:length(n.seq)){
   logistic.results$admb <- runADMB(simdata, Mod)
   save(logistic.results, file = paste0('results/logistic/logistic', '_n', n, '.RData'))
 }
+

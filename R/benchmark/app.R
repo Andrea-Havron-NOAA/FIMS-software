@@ -40,7 +40,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
 
     randomVals <- eventReactive(input$button,{
-      source('../../R/run_benchmark.R')
+      source('run_benchmark_shiny.R')
       run_models(input$params)
       setWinProgressBar(pb, i/(100)*100, label=info)
       })

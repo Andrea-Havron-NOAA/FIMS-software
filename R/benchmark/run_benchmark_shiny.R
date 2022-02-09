@@ -1,6 +1,6 @@
-source('../../data/simdata.R')
-source('../../R/utils.R')
-source('../../R/model_setup.R')
+source('simdata.R')
+source('utils.R')
+source('model_setup.R')
 
 
 
