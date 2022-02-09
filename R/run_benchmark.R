@@ -21,7 +21,7 @@ setupADMB('logisticGrowth_nonsep', doRE=TRUE)
 n.seq <- seq(5,12,1)
 for(i in 1:length(n.seq)){
   n <- 2^n.seq[i]
- 
+  
   #logistic model
   Mod <- 'logistic'
   
@@ -59,7 +59,7 @@ for(i in 1:length(n.seq)){
   save(logistic.results, file = paste0('results/logistic/logistic', '_n', n, '.RData'))
   
   
- 
+  
 }
 
 
@@ -71,7 +71,7 @@ for(i in 1:length(n.seq)){
   
   #logistic model
   Mod <- 'logistic'
-
+  
   simdata <- gendat(seed=i,
                     N=n,
                     theta = c(0.2,100),
