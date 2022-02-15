@@ -68,6 +68,9 @@ public:
    * - important for memory management
    */
   static logisticGrowth<Type>* getinstance(){
+    if(logisticGrowth<Type>::instance == NULL){
+      logisticGrowth<Type>::instance = new logisticGrowth<Type>();
+    }
     return logisticGrowth<Type>::instance;
   }
   
@@ -108,11 +111,11 @@ public:
     int n=y.size();
     
     for(int t=1; t<n; t++){
-      nll -= dlognorm(u[t], log(eta[t]), sigma, true);
+      nll -= dlognorm<Type>(u[t], log(eta[t]), sigma, true);
     }
     
     for(int t=0; t<n; t++){
-      nll -= dlognorm(y[t], log(u[t]), tau, true);
+      nll -= dlognorm<Type>(y[t], log(u[t]), tau, true);
     }
   
     return nll;  
@@ -138,6 +141,6 @@ public:
 
 //static members are defined outside class definition
 template<class Type>
-logisticGrowth<Type>* logisticGrowth<Type>::instance = new logisticGrowth<Type>();
+logisticGrowth<Type>* logisticGrowth<Type>::instance = NULL;
 
 #endif
