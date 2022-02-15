@@ -1,3 +1,6 @@
+#ifndef DERIVEDQUANTITIES_HPP
+#define DERIVEDQUANTITIES_HPP
+
 //Derived quantity functions
 
 /**
@@ -13,3 +16,5 @@ Type MSY(Type r, Type K){
   Type H = K*r/4;
   return H;
 }
+
+#endif

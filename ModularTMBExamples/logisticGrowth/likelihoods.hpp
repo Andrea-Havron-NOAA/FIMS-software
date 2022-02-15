@@ -1,3 +1,5 @@
+#ifndef LIKELIHOODS_HPP
+#define LIKELIHOODS_HPP
 #include <cmath>
 
 /**
@@ -17,3 +19,6 @@ Type dlognorm(Type x, Type meanlog, Type sdlog, int give_log=0){
   if(give_log) return logres; else return exp(logres);
   return logres;
 }
+
+
+#endif
