@@ -4,7 +4,7 @@
  * This example is not a module of FIMS and is for learning purposes only 
  * to demonstrate the concepts of modularity and portability. 
  */
-#define TMB_MODEL //defines TMB_MODEL: Common.hpp sets up TMB specific preprocessing macros 
+//#define TMB_MODEL //defines TMB_MODEL: Common.hpp sets up TMB specific preprocessing macros 
 #include "model.hpp" //contains the model
 #include "DerivedQuantities.hpp" //functions to calculate derived quantities
 

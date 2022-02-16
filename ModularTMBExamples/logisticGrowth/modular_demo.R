@@ -1,6 +1,8 @@
 library(TMB)
 source('data/simdata.R')
-TMB::compile("ModularTMBExamples/logisticGrowth/logisticGrowth.cpp")
+TMB::compile("ModularTMBExamples/logisticGrowth/logisticGrowth.cpp",
+             flags="-DTMB_MODEL -w")
+
 dyn.load(dynlib("ModularTMBExamples/logisticGrowth/logisticGrowth"))
 y <- gendat(seed=123,
                   N=100,
@@ -42,7 +44,7 @@ dyn.unload(dynlib("ModularTMBExamples/logisticGrowth/logisticGrowth"))
 # par <- list(ln_r = log(0.5), ln_K = log(80), ln_sig=-1,ln_tau=-1,
 #             u = rep(1,length(y)))
 # write_pin('logisticGrowth', par)
-# compile_admb('logisticGrowth', re = TRUE, verbose = TRUE)
+# compile_admb('logisticGrowth')#, re = TRUE, verbose = TRUE)
 # a <- Sys.time()
 # admb.mod <- run_admb('logisticGrowth', verbose = TRUE, extra.args = '-noinit')
 # b <- Sys.time()
