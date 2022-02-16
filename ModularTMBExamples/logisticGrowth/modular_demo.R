@@ -1,6 +1,5 @@
 library(TMB)
 source('data/simdata.R')
-#compile("src/Rcpp/logisticGrowth.cpp", flags= "-DTMB_MODEL -w")
 TMB::compile("ModularTMBExamples/logisticGrowth/logisticGrowth.cpp")
 dyn.load(dynlib("ModularTMBExamples/logisticGrowth/logisticGrowth"))
 y <- gendat(seed=123,
@@ -32,7 +31,18 @@ report$r
 
 #simulate data
 set.seed(123)
-modular.sim <- obj$simulate()
 
 dyn.unload(dynlib("ModularTMBExamples/logisticGrowth/logisticGrowth"))
 
+## not working yet
+# detach("package:TMB", unload=TRUE)
+# library(R2admb)
+# setwd('ModularTMBExamples/logisticGrowth/admb/')
+# write_dat('logisticGrowth', dat)
+# par <- list(ln_r = log(0.5), ln_K = log(80), ln_sig=-1,ln_tau=-1,
+#             u = rep(1,length(y)))
+# write_pin('logisticGrowth', par)
+# compile_admb('logisticGrowth', re = TRUE, verbose = TRUE)
+# a <- Sys.time()
+# admb.mod <- run_admb('logisticGrowth', verbose = TRUE, extra.args = '-noinit')
+# b <- Sys.time()
