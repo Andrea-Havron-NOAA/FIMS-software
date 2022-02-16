@@ -179,55 +179,26 @@ pre code {
 <h3>File Structure Overview</h3>
 <p>The <a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/tree/master/ModularTMBExamples/logisticGrowth">logisticGrowth modular example</a> uses the following file structure:</p>
 <ol style="list-style-type: decimal">
-<li><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/tree/master/ModularTMBExamples/logisticGrowth/Common.hpp">Common.hpp</a></li>
+<li><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/blob/master/ModularTMBExamples/logisticGrowth/Common.hpp">Common.hpp</a></li>
 </ol>
 <ul>
-<li>Includes all header statements
-<ul>
-<li>#include &lt;TMB.hpp&gt;: includes TMB core files</li>
-<li><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/blob/97038654972d02819b1f99211b236f83277e06f8/ModularTMBExamples/logisticGrowth/Common.hpp#L13">model_traits</a>: structure setting up data and parameter types</li>
-</ul></li>
+<li>Sets up pre-processing macros</li>
+<li>Includes all header statements</li>
+<li>Sets up data and parameter type structures</li>
 </ul>
 <ol start="2" style="list-style-type: decimal">
-<li><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/blob/97038654972d02819b1f99211b236f83277e06f8/ModularTMBExamples/logisticGrowth/likelihoods.hpp">likelihoods.hpp</a></li>
+<li><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/blob/master/ModularTMBExamples/logisticGrowth/likelihoods.hpp">likelihoods.hpp</a></li>
 </ol>
 <ul>
 <li>Defines lognormal distribution</li>
 </ul>
 <ol start="3" style="list-style-type: decimal">
-<li><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/tree/master/ModularTMBExamples/logisticGrowth/model.hpp">model.hpp</a>: Sets up logisticGrowth C++ templated class</li>
+<li><p><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/blob/master/ModularTMBExamples/logisticGrowth/model.hpp">model.hpp</a>: Sets up logisticGrowth C++ templated class</p></li>
+<li><p><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/blob/master/ModularTMBExamples/logisticGrowth/DerivedQuantities.hpp">DerivedQuantities.hpp</a> -Example of including functions that calculate derived quantities</p></li>
+<li><p><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/blob/master/ModularTMBExamples/logisticGrowth/logisticGrowth.cpp">logisticGrowth.cpp</a>: TMB interface with model.hpp</p></li>
+<li><p><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/tree/master/ModularTMBExamples/logisticGrowth/admb/logisticGrowth.tpl">logisticGrowth.tpl</a>: ADMB interface with model.hpp</p></li>
+<li><p><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/blob/master/ModularTMBExamples/logisticGrowth/modular_demo.R">modular_demo.R</a>: I/O R Interface</p></li>
 </ol>
-<ul>
-<li>Line 15 public: defines input data and parameters using the model_traits struct</li>
-<li>Lines 27-31: set up C++ singleton class. This singleton class will allow the functions within to be called within the TMB objective_function</li>
-<li>Lines 33-42: function that calculates random effects mean</li>
-<li>Lines 45-59: function that calculates likelihoods</li>
-<li>Lines 61-71: model is defined within the evaluate function</li>
-</ul>
-<ol start="4" style="list-style-type: decimal">
-<li><p><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/blob/97038654972d02819b1f99211b236f83277e06f8/ModularTMBExamples/logisticGrowth/DerivedQuantities.hpp">DerivedQuantities.hpp</a> -Example of including functions that calculate derived quantities</p></li>
-<li><p><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/tree/master/ModularTMBExamples/logisticGrowth/logisticGrowth.cpp">logisticGrowth.cpp</a>: TMB interface with model.hpp</p></li>
-</ol>
-<ul>
-<li>Line 4: include model.hpp</li>
-<li>Line 5: include DerivedQuantities.hpp</li>
-<li>Line 9: set-up TMB objective_function</li>
-<li>Line 10: create a pointer, inst, to point to the singleton class of logisticGrowth</li>
-<li>Lines 12-17: set-up data and parameters using TMB macros</li>
-<li>Lines 19-27: Define public members of logisticGrowth class</li>
-<li>Line 32: Call the evaluate function</li>
-<li>Lines 33-39: Simulate data and random effects using the TMB SIMULATE function</li>
-<li>Lines 40-55: Report out derived values and their standard errors, including derived quantities</li>
-</ul>
-<ol start="5" style="list-style-type: decimal">
-<li><a href="https://github.com/Andrea-Havron-NOAA/FIMS-software/blob/97038654972d02819b1f99211b236f83277e06f8/ModularTMBExamples/logisticGrowth/modular_demo.R">modular_demo.R</a>: I/O R Interface</li>
-</ol>
-<ul>
-<li>Line 4: compiles logisticGrowth.cpp</li>
-<li>Lines 6-11: Simulate data</li>
-<li>Lines 16-31: Fit model and generate reports</li>
-<li>Lines 35: Simulate data from model</li>
-</ul>
 </div>
 
 
