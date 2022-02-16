@@ -1,7 +1,7 @@
 ---
 title: "Modular example using a logistic growth function"
 author: "Andrea Havron"
-date: "1/25/2022"
+date: "2/16/2022"
 output: html_document
 ---
 
