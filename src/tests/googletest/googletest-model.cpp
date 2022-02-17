@@ -94,6 +94,8 @@ namespace {
     model_traits<double>::parameter_vector theta = {-0.6931472, 9.2103404};
     double ln_sig = -2.302585;
     double ln_tau = -3.506558;
+    double r = 0.5;
+    double K = 10000;
     
     model_traits<double>::parameter_vector u={5000, 6000, 7000, 5500};
     model_traits<double>::data_vector y={5050, 5950, 6950, 6000};
@@ -101,7 +103,9 @@ namespace {
     double true_nll = 58.13528;
     
     inst->y = y;
-    inst->theta = theta;
+    //inst->theta = theta;
+    inst->r = r;
+    inst->K = K;
     inst->ln_sig = ln_sig;
     inst->ln_tau = ln_tau;
     inst->u = u;
