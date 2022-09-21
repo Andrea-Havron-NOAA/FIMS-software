@@ -25,22 +25,23 @@ Type objective_function<Type>::operator() ()
   inst->phi1 = phi1;
   inst->phi2 = phi2;
   inst->eta = eta;
+  inst->of = this;
   
   Type nll = inst -> evaluate();
 
-  SIMULATE{
-    SEPARABLE(AR1(phi2), AR1(phi1)).simulate(eta);
-    vector<Type> ln_lambda = eta;//convert array to vector for rpois simulation
-    y = rpois(exp(ln_lambda));//rpois cannot accept array 
-    REPORT(eta);
-    REPORT(y);
-  }
+  //SIMULATE{
+  //  SEPARABLE(AR1(phi2), AR1(phi1)).simulate(eta);
+  //  vector<Type> ln_lambda = eta;//convert array to vector for rpois simulation
+  //  y = rpois(exp(ln_lambda));//rpois cannot accept array 
+  //  REPORT(eta);
+  //  REPORT(y);
+ // }
   
-  REPORT(phi1);
-  REPORT(phi2);
-  REPORT(eta);
-  ADREPORT(phi1);
-  ADREPORT(phi2);
+  //REPORT(phi1);
+  //REPORT(phi2);
+  //REPORT(eta);
+  //ADREPORT(phi1);
+  //ADREPORT(phi2);
 
   return nll;
 }

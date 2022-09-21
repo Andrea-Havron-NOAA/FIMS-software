@@ -12,9 +12,26 @@ using namespace density;
 //#include <Rcpp.h>
 //using namespace Rcpp;
 
+
+//define REPORT, ADREPORT, and SIMULATE
+#define REPORT_F(name,F)					\
+  if(isDouble<Type>::value && F->current_parallel_region<0) {	\
+    Rf_defineVar(Rf_install(#name),					\
+	      PROTECT(asSEXP(name)),F->report);			\
+    UNPROTECT(1);						\
+  }
+#define ADREPORT_F(name,F) F->reportvector.push(name,#name);
+
+#define SIMULATE_F(F)				\
+  if(isDouble<Type>::value && F->do_simulate)
+
+
+
+
 template<typename Type>
 struct model_traits{
- typedef typename CppAD::vector<Type> data_vector;
+ //typedef typename CppAD::vector<Type> data_vector;
+ typedef typename tmbutils::vector<Type> data_vector;
  typedef data_indicator<tmbutils::vector<Type> , Type>  data_indicator;
  typedef typename tmbutils::array<Type> array;
 };

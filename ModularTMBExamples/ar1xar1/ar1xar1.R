@@ -1,7 +1,9 @@
 ## modified code from: https://github.com/kaskr/adcomp/blob/master/TMB/inst/examples/ar1xar1.R
-
+library(TMB)
 #compile model
-TMB::compile("ModularTMBExamples/ar1xar1/ar1xar1.cpp", flags="-w")
+#TMB::compile("ModularTMBExamples/ar1xar1/ar1xar1.cpp", flags = "-O1 -g",DLLFLAGS ="")
+#TMB::compile("ModularTMBExamples/ar1xar1/ar1xar1.cpp", framework = 'TMBad')
+TMB::compile("ModularTMBExamples/ar1xar1/ar1xar1.cpp", framework = 'CppAD')
 
 set.seed(123)
 n <- 20 ## Size of problem = n*n
@@ -36,6 +38,7 @@ invf <- function(y) -0.5 * log(2/(y + 1) - 1)
 
 ## ======================= Fit model
 dyn.load(dynlib("ModularTMBExamples/ar1xar1/ar1xar1"))
+a <- Sys.time()
 obj <- MakeADFun(data=list(y=y),
                  parameters=list(
                    eta=matrix(0,n,n),
@@ -44,10 +47,12 @@ obj <- MakeADFun(data=list(y=y),
                  random=c("eta"),
                  DLL="ar1xar1")
 #runSymbolicAnalysis(obj)
-opt <- nlminb(obj$par, obj$fn, obj$gr)
+system.time(opt <- nlminb(obj$par, obj$fn, obj$gr))
+b <- Sys.time()
+b-a
 opt$par
 report <- obj$report()
-sdr <- sdreport(obj)
+system.time(sdr <- sdreport(obj))
 summary(sdr, 'report')
 phi1;phi2
 
