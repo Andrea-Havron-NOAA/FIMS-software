@@ -44,12 +44,6 @@ public:
     #ifdef TMB_MODEL
     SIMULATE_F(of){
       SEPARABLE(AR1(phi2), AR1(phi1)).simulate(eta);
-      vector<Type> ln_lambda = eta;//convert array to vector for rpois simulation
-      y = rpois(exp(ln_lambda));//rpois cannot accept array 
-    }
-
-    SIMULATE_F(of){
-      REPORT_F(y, of);
     }
     #endif
     
@@ -59,8 +53,15 @@ public:
       nll -= keep.cdf_lower[i] * log( cdf );       // NaN protected
       nll -= keep.cdf_upper[i] * log( 1.0 - cdf ); // NaN protected
     }
-
+    
     #ifdef TMB_MODEL
+    SIMULATE_F(of){
+      vector<Type> ln_lambda = eta;//convert array to vector for rpois simulation
+      y = rpois(exp(ln_lambda));//rpois cannot accept array 
+      REPORT_F(eta, of);
+      REPORT_F(y, of);
+    }
+    
     REPORT_F(phi1, of);
     REPORT_F(phi2, of);
     REPORT_F(eta, of);
